@@ -1,6 +1,6 @@
 'use client';
 
-import ThemeToggle from '../components/ThemeToggle';
+import Nav from '../components/Nav';
 
 const findings = [
   {
@@ -68,15 +68,14 @@ const cspDirectives = [
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <Nav />
+
       {/* Header */}
       <header className="border-b border-slate-200 dark:border-slate-800/80">
         <div className="max-w-6xl mx-auto px-6 py-12 md:py-16">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-amber-500" />
-              <span className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-500">Security Audit</span>
-            </div>
-            <ThemeToggle />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 rounded-full bg-amber-500" />
+            <span className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-500">Security Audit</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
             forceCalendar Security Audit
@@ -97,7 +96,7 @@ export default function Home() {
       <main className="max-w-6xl mx-auto px-6 py-10 space-y-12">
 
         {/* Zero Dependencies */}
-        <section>
+        <section id="supply-chain">
           <div className="section-label">Supply Chain Security</div>
           <div className="panel overflow-hidden">
             <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800/80 border-b border-slate-200 dark:border-slate-800/80">
@@ -183,7 +182,7 @@ export default function Home() {
         </section>
 
         {/* CSP Compliance */}
-        <section>
+        <section id="csp">
           <div className="section-label">Content Security Policy Compliance</div>
           <div className="panel overflow-hidden">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800/80">
@@ -245,7 +244,7 @@ export default function Home() {
         </section>
 
         {/* Attack Surface Analysis */}
-        <section>
+        <section id="attack-surface">
           <div className="section-label">Attack Surface Analysis</div>
           <div className="panel overflow-hidden">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800/80">
@@ -398,7 +397,7 @@ export default function Home() {
         </section>
 
         {/* Remediation Tracker */}
-        <section>
+        <section id="remediation">
           <div className="section-label">Remediation Tracker</div>
           <div className="panel overflow-hidden">
             <div className="overflow-x-auto">
@@ -508,7 +507,7 @@ export default function Home() {
         </section>
 
         {/* Responsible Disclosure */}
-        <section>
+        <section id="disclosure">
           <div className="section-label">Responsible Disclosure</div>
           <div className="panel overflow-hidden">
             <div className="p-6">
