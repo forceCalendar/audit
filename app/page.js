@@ -1,97 +1,7 @@
-'use client';
-
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
-
-const findings = [
-  {
-    id: 'ICS-001',
-    title: 'ICS parser lacks input size limits',
-    component: '@forcecalendar/core',
-    severity: 'Critical',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/37',
-    description: 'The ICS parser did not enforce maximum input size, line count, or event count limits. Fixed in v2.1.21 with configurable size limits and safe defaults.',
-  },
-  {
-    id: 'NET-001',
-    title: 'ICS fetch URL lacks SSRF protection',
-    component: '@forcecalendar/core',
-    severity: 'Critical',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/38',
-    description: 'When fetching remote .ics files, URLs were not validated against internal/private network ranges or schemes. Fixed in v2.1.21 with URL validation and scheme allowlisting.',
-  },
-  {
-    id: 'SEC-001',
-    title: 'Remove Locker Service evasion in AdaptiveMemoryManager',
-    component: '@forcecalendar/core',
-    severity: 'Critical',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/51',
-    description: 'Code used string concatenation to evade Salesforce Locker Service static analysis. Fixed in v2.1.21 by removing evasion patterns.',
-  },
-  {
-    id: 'EVT-001',
-    title: 'Event fields lack size limits',
-    component: '@forcecalendar/core',
-    severity: 'Critical',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/54',
-    description: 'Event title, description, location, and metadata fields had no size validation. Fixed in v2.1.21 with configurable field size limits.',
-  },
-  {
-    id: 'STATE-001',
-    title: 'StateManager prototype pollution via nested objects',
-    component: '@forcecalendar/core',
-    severity: 'High',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/55',
-    description: 'Shallow prototype pollution protection allowed nested object attacks. Fixed in v2.1.21 with deep key sanitization.',
-  },
-  {
-    id: 'REC-001',
-    title: 'RecurrenceEngine unbounded maxOccurrences parameter',
-    component: '@forcecalendar/core',
-    severity: 'Critical',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/56',
-    description: 'The maxOccurrences parameter had no hard limit. Fixed in v2.1.21 with a hard cap on recurrence expansion.',
-  },
-  {
-    id: 'RR-001',
-    title: 'RRuleParser lacks BYWEEKNO validation',
-    component: '@forcecalendar/core',
-    severity: 'Medium',
-    status: 'Resolved',
-    issue: 'https://github.com/forceCalendar/core/issues/57',
-    description: 'BYWEEKNO parsing accepted invalid week numbers without validation. Fixed in v2.1.21 with range validation.',
-  },
-  {
-    id: 'DOM-001',
-    title: 'innerHTML usage in DOM renderers',
-    component: '@forcecalendar/interface',
-    severity: 'High',
-    status: 'In Progress',
-    issue: 'https://github.com/forceCalendar/interface/issues/39',
-    description: 'Event renderers use innerHTML to insert content into the DOM. If event data contains untrusted input, this creates a cross-site scripting (XSS) vector.',
-  },
-];
-
-const severityBadge = (severity) => {
-  const map = { Critical: 'badge-red', High: 'badge-orange', Medium: 'badge-yellow', Low: 'badge-slate' };
-  return map[severity] || 'badge-slate';
-};
-
-const statusBadge = (status) => {
-  const map = {
-    'Resolved': 'badge-green',
-    'In Progress': 'badge-yellow',
-    'Needs Analysis': 'badge-slate',
-    'Open': 'badge-red',
-  };
-  return map[status] || 'badge-slate';
-};
+import RemediationTracker from '../components/RemediationTracker';
+import { fetchSecurityFindings } from './lib/github';
 
 const cspDirectives = [
   { directive: "script-src 'self'", compatible: true, note: 'No eval(), no new Function(), no inline scripts' },
@@ -102,7 +12,13 @@ const cspDirectives = [
   { directive: "base-uri 'self'", compatible: true, note: 'No base tag manipulation' },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const { findings, fetchedAt } = await fetchSecurityFindings();
+
+  const resolvedCount = findings.filter(f => f.status === 'Resolved').length;
+  const openCount = findings.filter(f => f.status !== 'Resolved').length;
+  const fetchDate = new Date(fetchedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <div className="min-h-screen">
       <Nav />
@@ -442,57 +358,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Remediation Tracker */}
-      <section id="remediation" className="py-20 px-6 border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8">
-            Remediation Tracker
-          </h2>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Finding</th>
-                    <th>Component</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                    <th>Issue</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {findings.map((f) => (
-                    <tr key={f.id}>
-                      <td className="font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap">{f.id}</td>
-                      <td className="text-sm text-slate-700 dark:text-slate-300">{f.title}</td>
-                      <td className="font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">{f.component}</td>
-                      <td><span className={`badge ${severityBadge(f.severity)}`}>{f.severity}</span></td>
-                      <td><span className={`badge ${statusBadge(f.status)}`}>{f.status}</span></td>
-                      <td>
-                        {f.issue ? (
-                          <a href={f.issue} className="font-mono text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
-                            #{f.issue.split('/').pop()}
-                          </a>
-                        ) : (
-                          <span className="text-xs text-slate-400 dark:text-slate-500">--</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800">
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                Last updated: February 2026. All 7 core findings resolved in v2.1.21. 1 interface finding (DOM-001) remains in progress.
-                Resolved findings remain listed for transparency.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Remediation Tracker — dynamic from GitHub */}
+      <RemediationTracker
+        findings={findings}
+        resolvedCount={resolvedCount}
+        openCount={openCount}
+        fetchDate={fetchDate}
+      />
 
       {/* Methodology */}
       <section id="methodology" className="py-20 px-6 border-t border-slate-200 dark:border-slate-800">
