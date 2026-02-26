@@ -6,9 +6,8 @@ export default function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('audit-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = stored === 'dark' || (!stored && prefersDark);
+    const stored = localStorage.getItem('theme');
+    const isDark = stored === 'dark';
     setDark(isDark);
     document.documentElement.classList.toggle('dark', isDark);
   }, []);
@@ -17,7 +16,7 @@ export default function ThemeToggle() {
     const next = !dark;
     setDark(next);
     document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('audit-theme', next ? 'dark' : 'light');
+    localStorage.setItem('theme', next ? 'dark' : 'light');
   };
 
   return (
