@@ -1,25 +1,70 @@
 'use client';
 
-import Nav from '../components/Nav';
+import ThemeToggle from '../components/ThemeToggle';
 
 const findings = [
   {
     id: 'ICS-001',
     title: 'ICS parser lacks input size limits',
     component: '@forcecalendar/core',
-    severity: 'Medium',
+    severity: 'Critical',
     status: 'In Progress',
     issue: 'https://github.com/forceCalendar/core/issues/37',
-    description: 'The ICS parser does not enforce maximum input size or recursion depth limits, which could allow denial-of-service via crafted .ics files.',
+    description: 'The ICS parser does not enforce maximum input size, line count, or event count limits, which could allow denial-of-service via crafted .ics files causing memory/CPU exhaustion.',
   },
   {
     id: 'NET-001',
     title: 'ICS fetch URL lacks SSRF protection',
     component: '@forcecalendar/core',
-    severity: 'Medium',
+    severity: 'Critical',
     status: 'In Progress',
     issue: 'https://github.com/forceCalendar/core/issues/38',
-    description: 'When fetching remote .ics files server-side, URLs are not validated against internal/private network ranges, creating a potential SSRF vector.',
+    description: 'When fetching remote .ics files, URLs are not validated against internal/private network ranges or schemes, creating a Server-Side Request Forgery (SSRF) vector.',
+  },
+  {
+    id: 'SEC-001',
+    title: 'Remove Locker Service evasion in AdaptiveMemoryManager',
+    component: '@forcecalendar/core',
+    severity: 'Critical',
+    status: 'Open',
+    issue: 'https://github.com/forceCalendar/core/issues/51',
+    description: 'Code uses string concatenation to evade Salesforce Locker Service static analysis, violating terms and causing deployment rejection.',
+  },
+  {
+    id: 'EVT-001',
+    title: 'Event fields lack size limits',
+    component: '@forcecalendar/core',
+    severity: 'Critical',
+    status: 'Open',
+    issue: 'https://github.com/forceCalendar/core/issues/54',
+    description: 'Event title, description, location, and metadata fields have no size validation, allowing storage exhaustion attacks.',
+  },
+  {
+    id: 'STATE-001',
+    title: 'StateManager prototype pollution via nested objects',
+    component: '@forcecalendar/core',
+    severity: 'High',
+    status: 'Open',
+    issue: 'https://github.com/forceCalendar/core/issues/55',
+    description: 'Shallow prototype pollution protection allows nested object attacks via metadata, filters, or businessHours fields.',
+  },
+  {
+    id: 'REC-001',
+    title: 'RecurrenceEngine unbounded maxOccurrences parameter',
+    component: '@forcecalendar/core',
+    severity: 'Critical',
+    status: 'Open',
+    issue: 'https://github.com/forceCalendar/core/issues/56',
+    description: 'The maxOccurrences parameter has no hard limit, allowing callers to pass unbounded values causing memory exhaustion.',
+  },
+  {
+    id: 'RR-001',
+    title: 'RRuleParser lacks BYWEEKNO validation',
+    component: '@forcecalendar/core',
+    severity: 'Medium',
+    status: 'Open',
+    issue: 'https://github.com/forceCalendar/core/issues/57',
+    description: 'BYWEEKNO parsing accepts invalid week numbers without validation, potentially causing logic errors in recurrence expansion.',
   },
   {
     id: 'DOM-001',
@@ -30,19 +75,10 @@ const findings = [
     issue: 'https://github.com/forceCalendar/interface/issues/39',
     description: 'Event renderers use innerHTML to insert content into the DOM. If event data contains untrusted input, this creates a cross-site scripting (XSS) vector.',
   },
-  {
-    id: 'CPU-001',
-    title: 'Recurrence engine algorithmic complexity',
-    component: '@forcecalendar/core',
-    severity: 'Low',
-    status: 'Needs Analysis',
-    issue: null,
-    description: 'Complex or malicious RRULE patterns could cause excessive computation during recurrence expansion. Needs analysis to determine if resource limits are required.',
-  },
 ];
 
 const severityBadge = (severity) => {
-  const map = { High: 'badge-red', Medium: 'badge-yellow', Low: 'badge-slate' };
+  const map = { Critical: 'badge-red', High: 'badge-orange', Medium: 'badge-yellow', Low: 'badge-slate' };
   return map[severity] || 'badge-slate';
 };
 
@@ -68,14 +104,15 @@ const cspDirectives = [
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <Nav />
-
       {/* Header */}
       <header className="border-b border-slate-200 dark:border-slate-800/80">
         <div className="max-w-6xl mx-auto px-6 py-12 md:py-16">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 rounded-full bg-amber-500" />
-            <span className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-500">Security Audit</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-500">Security Audit</span>
+            </div>
+            <ThemeToggle />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
             forceCalendar Security Audit
@@ -96,7 +133,7 @@ export default function Home() {
       <main className="max-w-6xl mx-auto px-6 py-10 space-y-12">
 
         {/* Zero Dependencies */}
-        <section id="supply-chain">
+        <section>
           <div className="section-label">Supply Chain Security</div>
           <div className="panel overflow-hidden">
             <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800/80 border-b border-slate-200 dark:border-slate-800/80">
@@ -182,7 +219,7 @@ export default function Home() {
         </section>
 
         {/* CSP Compliance */}
-        <section id="csp">
+        <section>
           <div className="section-label">Content Security Policy Compliance</div>
           <div className="panel overflow-hidden">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800/80">
@@ -244,7 +281,7 @@ export default function Home() {
         </section>
 
         {/* Attack Surface Analysis */}
-        <section id="attack-surface">
+        <section>
           <div className="section-label">Attack Surface Analysis</div>
           <div className="panel overflow-hidden">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800/80">
@@ -397,7 +434,7 @@ export default function Home() {
         </section>
 
         {/* Remediation Tracker */}
-        <section id="remediation">
+        <section>
           <div className="section-label">Remediation Tracker</div>
           <div className="panel overflow-hidden">
             <div className="overflow-x-auto">
@@ -507,7 +544,7 @@ export default function Home() {
         </section>
 
         {/* Responsible Disclosure */}
-        <section id="disclosure">
+        <section>
           <div className="section-label">Responsible Disclosure</div>
           <div className="panel overflow-hidden">
             <div className="p-6">

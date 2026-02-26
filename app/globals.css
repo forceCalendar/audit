@@ -7,11 +7,6 @@
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
 }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 4rem;
-}
-
 body {
   @apply bg-white text-slate-600 dark:bg-slate-950 dark:text-slate-300 antialiased;
   font-family: var(--font-sans);
@@ -102,6 +97,10 @@ a {
   @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
 }
 
+.badge-orange {
+  @apply bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400;
+}
+
 .badge-yellow {
   @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
 }
@@ -112,14 +111,4 @@ a {
 
 .badge-slate {
   @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400;
-}
-
-/* Slide-in animation for mobile menu */
-@keyframes slide-in {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-.animate-slide-in {
-  animation: slide-in 0.2s ease-out;
 }
