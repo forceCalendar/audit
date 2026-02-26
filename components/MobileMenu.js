@@ -34,30 +34,11 @@ export default function MobileMenu({ open, onClose }) {
           </button>
         </div>
 
-        <nav className="px-4">
-          {/* Page sections */}
-          <div className="mb-6">
+        <nav className="px-4 space-y-6">
+          {/* Site selector */}
+          <div>
             <div className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-              On this page
-            </div>
-            <div className="space-y-0.5">
-              {pageLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={onClose}
-                  className="block px-3 py-2 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Site links */}
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
-            <div className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-              forceCalendar
+              Sites
             </div>
             <div className="space-y-0.5">
               {sites.map((site) => (
@@ -77,10 +58,29 @@ export default function MobileMenu({ open, onClose }) {
             </div>
           </div>
 
+          {/* Page links */}
+          <div>
+            <div className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+              Pages
+            </div>
+            <div className="space-y-0.5">
+              {pageLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={onClose}
+                  className="block px-3 py-2 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
           {/* GitHub */}
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-4 mt-4">
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
             <a
-              href="https://github.com/forceCalendar/audit"
+              href="https://github.com/forcecalendar"
               className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

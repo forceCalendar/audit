@@ -41,7 +41,7 @@ export default function Nav() {
   return (
     <>
       <nav className="sticky top-0 z-30 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
 
           {/* Left: Logo + site switcher */}
           <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export default function Nav() {
           <div className="flex items-center gap-1">
             <ThemeToggle />
             <a
-              href="https://github.com/forceCalendar/audit"
+              href="https://github.com/forcecalendar"
               className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               aria-label="GitHub"
             >
