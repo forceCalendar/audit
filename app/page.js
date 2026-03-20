@@ -432,47 +432,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Responsible Disclosure */}
-      <section id="disclosure" className="py-20 px-6 border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8">
-            Responsible Disclosure
-          </h2>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
-            <div className="p-6">
-              <h3 className="font-medium text-slate-900 dark:text-white mb-3 text-sm">Reporting security vulnerabilities</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
-                If you discover a security vulnerability in forceCalendar, we ask that you disclose it responsibly.
-                Please do not open a public GitHub issue for security findings.
-              </p>
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Preferred method</div>
-                  <p className="text-sm text-slate-700 dark:text-slate-300">
-                    Use <a href="https://github.com/forceCalendar/core/security/advisories" className="underline decoration-slate-300 dark:decoration-slate-600 hover:text-slate-900 dark:hover:text-white">GitHub Security Advisories</a> on
-                    the relevant repository (<span className="font-mono text-xs">core</span> or <span className="font-mono text-xs">interface</span>).
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Email</div>
-                  <p className="text-sm text-slate-700 dark:text-slate-300">
-                    <span className="font-mono text-xs">security@forcecalendar.org</span>
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Response commitment</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    We aim to acknowledge reports within <strong className="text-slate-700 dark:text-slate-300">48 hours</strong> and
-                    provide a remediation timeline within <strong className="text-slate-700 dark:text-slate-300">7 days</strong>.
-                    Critical vulnerabilities will be patched and released as soon as a fix is verified.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </div>
   );

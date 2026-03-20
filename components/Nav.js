@@ -17,7 +17,6 @@ const pageLinks = [
   { href: '#attack-surface', label: 'Attack Surface' },
   { href: '#remediation', label: 'Remediation' },
   { href: '#methodology', label: 'Methodology' },
-  { href: '#disclosure', label: 'Disclosure' },
 ];
 
 export { sites, pageLinks };
