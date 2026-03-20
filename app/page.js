@@ -121,6 +121,33 @@ export default async function Home() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="font-medium text-slate-900 dark:text-white mb-3 text-sm">Dev dependency hygiene</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                While forceCalendar ships zero runtime dependencies, development tooling (testing, bundling, linting)
+                does use dev dependencies. Dependabot monitors these for known vulnerabilities.
+              </p>
+              <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800 mb-4">
+                <div className="px-4 py-3 text-center">
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">28/30</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Alerts Resolved</div>
+                </div>
+                <div className="px-4 py-3 text-center">
+                  <div className="text-xl font-bold text-amber-600 dark:text-amber-400 tracking-tight font-mono">2</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dev-Only Remaining</div>
+                </div>
+                <div className="px-4 py-3 text-center">
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">14</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dependabot PRs Merged</div>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                The 2 remaining alerts are dev-only transitive dependencies (<span className="font-mono text-xs">esbuild</span> via
+                Vite and <span className="font-mono text-xs">@tootallnate/once</span> via Jest) that do not affect
+                published packages or runtime behavior. These will be resolved when upstream tooling releases updates.
+              </p>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
               <p className="text-xs text-slate-400 dark:text-slate-500">
                 Verified by running <span className="font-mono text-xs">npm ls --all --json</span> on{' '}
                 <span className="font-mono text-xs">@forcecalendar/core</span> and{' '}
@@ -353,6 +380,149 @@ export default async function Home() {
                   <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">-- Resolved in v2.1.21</span>
                 </div>
               </div>
+
+              {/* ReDoS Email Validation */}
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-medium text-slate-900 dark:text-white text-sm">ReDoS in Email Validation</h3>
+                    <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">@forcecalendar/core</span>
+                  </div>
+                  <span className="badge badge-green">Resolved</span>
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                  The email validation regex used in organizer and attendee fields was vulnerable to Regular Expression
+                  Denial of Service (ReDoS). Crafted input strings could cause catastrophic backtracking, blocking
+                  the main thread.
+                </p>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Fixed in v2.1.22 -- replaced vulnerable regex with linear-time validation</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>New regex has O(n) worst-case complexity, preventing backtracking attacks</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Affects ICS parsing of ORGANIZER and ATTENDEE fields with mailto: URIs</span>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <a href="https://github.com/forceCalendar/core/issues/111" className="text-xs font-mono text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                    GitHub Issue #111
+                  </a>
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">-- Resolved in v2.1.22</span>
+                </div>
+              </div>
+
+              {/* Workflow Permissions */}
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-medium text-slate-900 dark:text-white text-sm">CI/CD Workflow Permissions</h3>
+                    <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">@forcecalendar/core</span>
+                  </div>
+                  <span className="badge badge-green">Resolved</span>
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                  GitHub Actions workflows were using default (write-all) permissions, granting more access than
+                  necessary. This is a supply chain hardening concern -- overly permissive workflows can be exploited
+                  if a dependency or action is compromised.
+                </p>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Fixed -- explicit least-privilege <span className="font-mono text-xs">permissions</span> blocks added to all workflows</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Read-only default with scoped write access only where required</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Follows GitHub&apos;s recommended security hardening for Actions</span>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <a href="https://github.com/forceCalendar/core/issues/112" className="text-xs font-mono text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                    GitHub Issue #112
+                  </a>
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">-- Resolved</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Critical Bug Fixes */}
+          <div className="mt-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="font-medium text-slate-900 dark:text-white text-sm mb-2">Recent Critical Bug Fixes</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                The following correctness bugs were identified and resolved in v2.1.22. While not direct security
+                vulnerabilities, correctness bugs in date/time handling can lead to data integrity issues in
+                production calendar systems.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Issue</th>
+                    <th>Bug</th>
+                    <th>Impact</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <a href="https://github.com/forceCalendar/core/issues/107" className="font-mono text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                        #107
+                      </a>
+                    </td>
+                    <td className="text-sm text-slate-700 dark:text-slate-300">TimezoneManager.parseTimezone() property name mismatch</td>
+                    <td className="text-sm text-slate-500 dark:text-slate-400">Timezone abbreviations (e.g. PST, EST) could fail to resolve</td>
+                    <td><span className="badge badge-green">Resolved</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="https://github.com/forceCalendar/core/issues/108" className="font-mono text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                        #108
+                      </a>
+                    </td>
+                    <td className="text-sm text-slate-700 dark:text-slate-300">ICSParser VALARM export uses wrong property name</td>
+                    <td className="text-sm text-slate-500 dark:text-slate-400">Alarm/reminder data lost during ICS round-trip export</td>
+                    <td><span className="badge badge-green">Resolved</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="https://github.com/forceCalendar/core/issues/109" className="font-mono text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                        #109
+                      </a>
+                    </td>
+                    <td className="text-sm text-slate-700 dark:text-slate-300">DateUtils.isDST() returns inverted boolean</td>
+                    <td className="text-sm text-slate-500 dark:text-slate-400">DST detection logic inverted, causing incorrect time offsets</td>
+                    <td><span className="badge badge-green">Resolved</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="https://github.com/forceCalendar/core/issues/110" className="font-mono text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                        #110
+                      </a>
+                    </td>
+                    <td className="text-sm text-slate-700 dark:text-slate-300">DateUtils.addHoursWithDST() double-adjusts offset</td>
+                    <td className="text-sm text-slate-500 dark:text-slate-400">Events shifted by double the DST offset during transitions</td>
+                    <td><span className="badge badge-green">Resolved</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800">
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                All fixes shipped in PRs #113--#118. See individual GitHub issues for technical details and regression tests.
+              </p>
             </div>
           </div>
         </div>

@@ -3,6 +3,13 @@ const REPOS = [
   { owner: 'forceCalendar', repo: 'interface', component: '@forcecalendar/interface' },
 ];
 
+// Fetch both security findings and critical/high-priority bugs
+const LABEL_QUERIES = [
+  'type:security',
+  'type:bug,priority:critical',
+  'type:bug,priority:high',
+];
+
 function extractSeverity(labels) {
   for (const label of labels) {
     if (label.name === 'priority:critical') return 'Critical';
@@ -53,51 +60,63 @@ export async function fetchSecurityFindings() {
   const allFindings = [];
 
   for (const { owner, repo, component } of REPOS) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/issues?labels=type:security&state=all&per_page=100&sort=created&direction=asc`;
+    // Deduplicate across all label queries by issue number
+    const seenIssues = new Map();
 
-    try {
-      const res = await fetch(url, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'forceCalendar-audit-site',
-        },
-        next: { revalidate: false }, // Static: fetched at build time only
-      });
+    for (const labels of LABEL_QUERIES) {
+      const url = `https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=100&sort=created&direction=asc`;
 
-      if (!res.ok) {
-        console.error(`GitHub API error for ${owner}/${repo}: ${res.status} ${res.statusText}`);
-        continue;
-      }
-
-      const issues = await res.json();
-
-      // Deduplicate by title -- some issues were created twice (e.g. interface #38 and #39)
-      // Keep the latest (highest number) for each unique title
-      const seenTitles = new Map();
-      for (const issue of issues) {
-        const normalizedTitle = issue.title.replace(/^(CRITICAL|HIGH|MEDIUM|LOW):\s*/i, '').trim();
-        const existing = seenTitles.get(normalizedTitle);
-        if (!existing || issue.number > existing.number) {
-          seenTitles.set(normalizedTitle, issue);
-        }
-      }
-
-      for (const issue of seenTitles.values()) {
-        allFindings.push({
-          number: issue.number,
-          title: issue.title,
-          component,
-          repo: `${owner}/${repo}`,
-          severity: extractSeverity(issue.labels),
-          status: deriveStatus(issue),
-          url: issue.html_url,
-          description: extractDescription(issue.body),
-          createdAt: issue.created_at,
-          closedAt: issue.closed_at,
+      try {
+        const res = await fetch(url, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'forceCalendar-audit-site',
+          },
+          next: { revalidate: false }, // Static: fetched at build time only
         });
+
+        if (!res.ok) {
+          console.error(`GitHub API error for ${owner}/${repo} (${labels}): ${res.status} ${res.statusText}`);
+          continue;
+        }
+
+        const issues = await res.json();
+
+        for (const issue of issues) {
+          // Deduplicate by issue number (same issue may match multiple label queries)
+          if (!seenIssues.has(issue.number)) {
+            seenIssues.set(issue.number, issue);
+          }
+        }
+      } catch (err) {
+        console.error(`Failed to fetch issues for ${owner}/${repo} (${labels}):`, err.message);
       }
-    } catch (err) {
-      console.error(`Failed to fetch issues for ${owner}/${repo}:`, err.message);
+    }
+
+    // Deduplicate by title -- some issues were created twice (e.g. interface #38 and #39)
+    // Keep the latest (highest number) for each unique title
+    const seenTitles = new Map();
+    for (const issue of seenIssues.values()) {
+      const normalizedTitle = issue.title.replace(/^(CRITICAL|HIGH|MEDIUM|LOW):\s*/i, '').trim();
+      const existing = seenTitles.get(normalizedTitle);
+      if (!existing || issue.number > existing.number) {
+        seenTitles.set(normalizedTitle, issue);
+      }
+    }
+
+    for (const issue of seenTitles.values()) {
+      allFindings.push({
+        number: issue.number,
+        title: issue.title,
+        component,
+        repo: `${owner}/${repo}`,
+        severity: extractSeverity(issue.labels),
+        status: deriveStatus(issue),
+        url: issue.html_url,
+        description: extractDescription(issue.body),
+        createdAt: issue.created_at,
+        closedAt: issue.closed_at,
+      });
     }
   }
 
