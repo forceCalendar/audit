@@ -128,22 +128,23 @@ export default async function Home() {
               </p>
               <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800 mb-4">
                 <div className="px-4 py-3 text-center">
-                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">28/30</div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Alerts Resolved</div>
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">82</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Alerts Resolved (core)</div>
                 </div>
                 <div className="px-4 py-3 text-center">
-                  <div className="text-xl font-bold text-amber-600 dark:text-amber-400 tracking-tight font-mono">2</div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dev-Only Remaining</div>
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">0</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Open Alerts (core)</div>
                 </div>
                 <div className="px-4 py-3 text-center">
-                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">14</div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dependabot PRs Merged</div>
+                  <div className="text-xl font-bold text-amber-600 dark:text-amber-400 tracking-tight font-mono">3</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dev-Only Remaining (interface)</div>
                 </div>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                The 2 remaining alerts are dev-only transitive dependencies (<span className="font-mono text-xs">esbuild</span> via
-                Vite and <span className="font-mono text-xs">@tootallnate/once</span> via Jest) that do not affect
-                published packages or runtime behavior. These will be resolved when upstream tooling releases updates.
+                The 3 remaining alerts are dev-only transitive dependencies (<span className="font-mono text-xs">vite</span> in
+                the interface build tooling) that do not affect published packages or runtime behavior.
+                These will be resolved when upstream tooling releases updates. Counts as of July 2026,
+                from GitHub Dependabot.
               </p>
             </div>
 
@@ -210,7 +211,8 @@ export default async function Home() {
                 ))}
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">
-                * innerHTML is used in <span className="font-mono text-xs">@forcecalendar/interface</span> renderers and is tracked as finding DOM-001.
+                * innerHTML is used in <span className="font-mono text-xs">@forcecalendar/interface</span> renderers with
+                all user-controlled values escaped before interpolation (finding DOM-001, resolved).
                 The core library is entirely DOM-free.
               </p>
             </div>
@@ -317,21 +319,21 @@ export default async function Home() {
                     <h3 className="font-medium text-slate-900 dark:text-white text-sm">DOM Rendering / XSS</h3>
                     <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">@forcecalendar/interface</span>
                   </div>
-                  <span className="badge badge-yellow">In Progress</span>
+                  <span className="badge badge-green">Resolved</span>
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
-                  The Web Components interface layer renders event data into the DOM. Certain renderers
-                  use <span className="font-mono text-xs">innerHTML</span> to insert content, which creates a cross-site scripting
-                  vector if event data contains untrusted input.
+                  The Web Components interface layer renders event data into the DOM. Renderers previously
+                  inserted content via <span className="font-mono text-xs">innerHTML</span> without escaping, creating a cross-site
+                  scripting vector when event data contained untrusted input.
                 </p>
                 <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
                   <div className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-0.5 shrink-0">!</span>
-                    <span>innerHTML in renderers can execute injected scripts via event titles or descriptions</span>
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Fixed -- all user-controlled values are escaped before template interpolation</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
-                    <span>Shadow DOM provides partial isolation from the host page</span>
+                    <span>Hardened further in v1.0.60 -- <span className="font-mono text-xs">parseHTML()</span> sanitizes by default, stripping script-capable elements, inline handlers, and <span className="font-mono text-xs">javascript:</span> URLs</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
@@ -342,7 +344,7 @@ export default async function Home() {
                   <a href="https://github.com/forceCalendar/interface/issues/39" className="text-xs font-mono text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
                     GitHub Issue #39
                   </a>
-                  <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">-- Under remediation</span>
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">-- Resolved February 2026; defense-in-depth added in v1.0.60</span>
                 </div>
               </div>
 
@@ -458,7 +460,7 @@ export default async function Home() {
           {/* Critical Bug Fixes */}
           <div className="mt-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-medium text-slate-900 dark:text-white text-sm mb-2">Recent Critical Bug Fixes</h3>
+              <h3 className="font-medium text-slate-900 dark:text-white text-sm mb-2">Critical Bug Fixes (v2.1.22)</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                 The following correctness bugs were identified and resolved in v2.1.22. While not direct security
                 vulnerabilities, correctness bugs in date/time handling can lead to data integrity issues in
@@ -523,6 +525,55 @@ export default async function Home() {
               <p className="text-xs text-slate-400 dark:text-slate-500">
                 All fixes shipped in PRs #113--#118. See individual GitHub issues for technical details and regression tests.
               </p>
+            </div>
+          </div>
+
+          {/* Continued Hardening */}
+          <div className="mt-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="font-medium text-slate-900 dark:text-white text-sm mb-2">Continued Hardening (2026)</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                Security and stability work is ongoing. The most recent release series shipped further
+                hardening across both packages.
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono text-slate-400 dark:text-slate-500">@forcecalendar/core</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">v2.1.63 -- v2.1.68</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Hardened ICS import and timezone parsing against malformed input</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Stabilized search worker indexing, event overlap indexing, and recurring event expansion</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono text-slate-400 dark:text-slate-500">@forcecalendar/interface</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">v1.0.60</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span><span className="font-mono text-xs">parseHTML()</span> now sanitizes by default -- strips script-capable elements, inline event handlers, and <span className="font-mono text-xs">javascript:</span> URLs</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Focus trapping fixed inside Shadow DOM; animation waits can no longer hang callers</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Defensive escaping of color labels and values in the event form</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
