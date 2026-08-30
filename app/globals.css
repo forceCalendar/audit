@@ -2,10 +2,222 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Design tokens, shared with forcecalendar.org. Colours are RGB triplets so
+   Tailwind utilities keep their alpha modifier (see tailwind.config.js).
+   Light on :root, dark on .dark.
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --surface: 255 255 255;
+  --surface-raised: 255 255 255;
+  --surface-sunken: 247 248 250;
+
+  /* Borders */
+  --hairline: 229 232 237;
+  --line: 205 211 221;
+
+  /* Text */
+  --fg: 14 19 29;
+  --fg-muted: 82 91 107;
+  --fg-subtle: 96 107 125;
+
+  /* Accent (one hue, everywhere) */
+  --accent: 36 72 224;
+  --accent-hover: 29 56 184;
+  --accent-fg: 255 255 255;
+  --accent-text: 30 58 190;
+  --accent-soft: 238 243 255;
+  --accent-line: 188 207 255;
+  --ring: 53 99 245;
+
+  /* Status hues: used only for severity and state pills */
+  --ok: 22 122 78;
+  --ok-soft: 233 247 239;
+  --ok-line: 170 220 194;
+  --warn: 158 94 8;
+  --warn-soft: 253 244 228;
+  --warn-line: 240 208 150;
+  --bad: 178 40 46;
+  --bad-soft: 253 236 236;
+  --bad-line: 240 180 182;
+
+  /* Code windows: dark on both themes; slightly lifted in dark mode */
+  --code-bg: 15 20 30;
+  --code-chrome: 21 27 40;
+  --code-border: 36 43 58;
+  --code-fg: 214 220 230;
+  --code-muted: 124 134 154;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface: 11 14 20;
+  --surface-raised: 18 22 30;
+  --surface-sunken: 8 10 15;
+
+  --hairline: 33 39 51;
+  --line: 54 62 79;
+
+  --fg: 236 239 244;
+  --fg-muted: 160 168 183;
+  --fg-subtle: 128 137 154;
+
+  --accent: 53 99 245;
+  --accent-hover: 92 132 255;
+  --accent-fg: 255 255 255;
+  --accent-text: 133 163 255;
+  --accent-soft: 22 32 62;
+  --accent-line: 44 64 122;
+  --ring: 92 132 255;
+
+  --ok: 96 200 140;
+  --ok-soft: 16 40 30;
+  --ok-line: 32 84 58;
+  --warn: 232 176 74;
+  --warn-soft: 44 33 14;
+  --warn-line: 96 70 26;
+  --bad: 240 120 124;
+  --bad-soft: 48 22 24;
+  --bad-line: 104 42 46;
+
+  --code-bg: 17 21 30;
+  --code-chrome: 22 27 38;
+  --code-border: 40 47 62;
+  --code-fg: 214 220 230;
+  --code-muted: 124 134 154;
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: rgb(var(--surface));
+  color: rgb(var(--fg));
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.18);
+}
+
+.dark ::selection {
+  background: rgb(var(--accent-hover) / 0.3);
+}
+
+@layer base {
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  .font-display {
+    font-feature-settings: "ss01", "cv11";
+  }
+  /* Keep code literal: no => or != ligatures in samples people copy */
+  code, pre, kbd, samp {
+    font-variant-ligatures: none;
+  }
+  /* Anchor targets sit below the sticky nav */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  /* Inline code: quiet mono chip on the sunken surface */
+  .code {
+    @apply rounded-sm bg-sunken px-1.5 py-0.5 font-mono text-[0.85em] text-fg ring-1 ring-inset ring-hairline;
+  }
+
+  /* Severity / status pills */
+  .pill {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ring-1 ring-inset;
+  }
+  .pill-ok {
+    @apply bg-ok-soft text-ok ring-ok-line/70;
+  }
+  .pill-warn {
+    @apply bg-warn-soft text-warn ring-warn-line/70;
+  }
+  .pill-bad {
+    @apply bg-bad-soft text-bad ring-bad-line/70;
+  }
+  .pill-accent {
+    @apply bg-accent-soft text-accent-text ring-accent-line/70;
+  }
+  .pill-neutral {
+    @apply bg-sunken text-muted ring-hairline;
+  }
+
+  /* Data tables: sticky header, hairline zebra, comfortable density */
+  .data-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .data-table thead th {
+    @apply bg-sunken/95 px-4 py-2.5 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-subtle backdrop-blur;
+    box-shadow: inset 0 -1px 0 rgb(var(--hairline));
+  }
+  /* Long tables keep their header under the 4rem nav while scrolling */
+  .data-table.sticky-head thead th {
+    @apply z-10 md:sticky md:top-16;
+  }
+  .data-table tbody td {
+    @apply px-4 py-3 align-top border-b border-hairline;
+  }
+  .data-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  .data-table tbody tr:nth-child(even) td {
+    background-color: rgb(var(--surface-sunken) / 0.55);
+  }
+  .data-table tbody tr:hover td {
+    background-color: rgb(var(--accent-soft) / 0.5);
+  }
+  .data-table.compact tbody td {
+    @apply py-2;
+  }
+
+  /* Plain text link with hairline underline */
+  .link {
+    @apply text-fg underline decoration-line underline-offset-[3px] transition-colors hover:decoration-accent hover:text-accent-text;
+  }
+  .link-quiet {
+    @apply text-muted underline decoration-hairline underline-offset-[3px] transition-colors hover:text-fg hover:decoration-line;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Dark-mode inner highlight on raised panels */
+  .dark .ring-hi {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+}
+
+/* Subtle blueprint grid used behind the page header */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(var(--fg) / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--fg) / 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 72%);
+}
+
+.dark .bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(var(--fg) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--fg) / 0.05) 1px, transparent 1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -17,50 +229,4 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Status badges */
-.badge {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider;
-}
-
-.badge-red {
-  @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
-}
-
-.badge-orange {
-  @apply bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400;
-}
-
-.badge-yellow {
-  @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
-}
-
-.badge-green {
-  @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400;
-}
-
-.badge-slate {
-  @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400;
-}
-
-/* Tables */
-table {
-  @apply w-full border-collapse text-sm;
-}
-
-thead th {
-  @apply text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 py-3 px-4 border-b border-slate-200 dark:border-slate-800;
-}
-
-tbody td {
-  @apply py-3 px-4 border-b border-slate-100 dark:border-slate-800/50;
-}
-
-tbody tr:last-child td {
-  @apply border-b-0;
-}
-
-tbody tr:hover td {
-  @apply bg-slate-100/50 dark:bg-slate-800/30;
 }
