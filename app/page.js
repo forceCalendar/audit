@@ -17,6 +17,23 @@ const cspDirectives = [
   { directive: "base-uri 'self'", compatible: true, note: 'No base tag manipulation' },
 ];
 
+// Findings that are fixed or in progress but not yet published with an issue
+// link. Rendered at the top of the Attack Surface list; renders nothing while
+// empty. Shape:
+//   {
+//     id: 'monthly-byday-loop',
+//     title: '...',
+//     component: '@forcecalendar/core',
+//     summary: '...',
+//     points: ['...'],
+//     issue: { url: 'https://github.com/forceCalendar/core/issues/NNN', label: 'GitHub Issue #NNN' },
+//     resolution: 'Fixed in vX.Y.Z',
+//     status: 'Resolved' | 'In Progress' | 'Open',
+//   }
+const PENDING_FINDINGS = [];
+
+const statusBadge = { Resolved: 'badge-green', 'In Progress': 'badge-yellow', Open: 'badge-red' };
+
 export default async function Home() {
   const { findings, fetchedAt } = await fetchSecurityFindings();
 
@@ -276,6 +293,33 @@ export default async function Home() {
             </div>
 
             <div className="divide-y divide-slate-200 dark:divide-slate-800">
+              {PENDING_FINDINGS.map((f) => (
+                <div key={f.id} className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-medium text-slate-900 dark:text-white text-sm">{f.title}</h3>
+                      <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">{f.component}</span>
+                    </div>
+                    <span className={`badge ${statusBadge[f.status] || 'badge-slate'}`}>{f.status}</span>
+                  </div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">{f.summary}</p>
+                  <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                    {f.points.map((pt) => (
+                      <div key={pt} className="flex items-start gap-2">
+                        <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                        <span>{pt}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3">
+                    <a href={f.issue.url} className="text-xs font-mono text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline decoration-slate-300 dark:decoration-slate-600">
+                      {f.issue.label}
+                    </a>
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">-- {f.resolution}</span>
+                  </div>
+                </div>
+              ))}
+
               {/* ICS Parser */}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
@@ -559,6 +603,63 @@ export default async function Home() {
               <p className="text-xs text-slate-400 dark:text-slate-500">
                 All fixes shipped in PRs #113--#118. See individual GitHub issues for technical details and regression tests.
               </p>
+            </div>
+          </div>
+
+          {/* Hardening -- August 2026 */}
+          <div className="mt-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="font-medium text-slate-900 dark:text-white text-sm mb-2">Hardening -- August 2026</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                A CI/CD fix in both publish pipelines, CPU-exhaustion mitigations in the recurrence engine, and a clean
+                sweep of the dev-dependency advisories.
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono text-slate-400 dark:text-slate-500">core · interface</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">publish workflows</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Command-injection fix: the release step interpolated the commit message directly into a shell script; it is now passed through an environment variable</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Both workflows publish with npm provenance; the release-banner step authenticates with a bearer-token secret</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Dev-dependency trees updated to clear the <span className="font-mono text-xs">brace-expansion</span>, <span className="font-mono text-xs">js-yaml</span>, <span className="font-mono text-xs">nanoid</span> and <span className="font-mono text-xs">postcss</span> advisories (interface 1.6.0 -- 1.7.0)</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono text-slate-400 dark:text-slate-500">@forcecalendar/core</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">v2.5.1 -- v2.5.2</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Bounded recurrence expansion: a hard iteration limit (<span className="font-mono text-xs">MAX_ITERATIONS_HARD_LIMIT</span>) caps every expansion loop</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Incremental timezone-transition caches: a far-past DTSTART no longer triggers multi-second rescans (CPU DoS mitigation)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Recurrence rule objects are no longer mutated during expansion</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-0.5 shrink-0">+</span>
+                    <span>Occurrence-id resolution is consistent across APIs; hourCycle fix for older ICU builds</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
