@@ -13,14 +13,14 @@ The public security transparency page for [forceCalendar](https://forcecalendar.
 
 ## Stack
 
-Next.js (static export) · React 19 · Tailwind CSS. The findings data comes from `app/lib/github.js`, which queries the GitHub Issues API — no manual editing of findings.
+Next.js (App Router, ISR) · React 19 · Tailwind CSS. The findings data comes from `app/lib/github.js`, which queries the GitHub Issues API on the server; the rendered page is regenerated at most once an hour, so the tracker follows GitHub without a redeploy — no manual editing of findings.
 
 ## Development
 
 ```bash
 npm install
 npm run dev      # http://localhost:3000
-npm run build    # static export to out/
+npm run build    # production build (ISR page, revalidated hourly)
 ```
 
 ## Reporting a vulnerability
