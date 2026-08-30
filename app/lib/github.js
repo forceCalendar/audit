@@ -58,6 +58,10 @@ function deriveStatus(issue) {
 
 export async function fetchSecurityFindings() {
   const allFindings = [];
+  // Every query degrades independently; the page reports how many failed so
+  // a partial result is never mistaken for a clean one.
+  const totalQueries = REPOS.length * LABEL_QUERIES.length;
+  let failedQueries = 0;
 
   for (const { owner, repo, component } of REPOS) {
     // Deduplicate across all label queries by issue number
@@ -72,11 +76,14 @@ export async function fetchSecurityFindings() {
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': 'forceCalendar-audit-site',
           },
-          next: { revalidate: false }, // Static: fetched at build time only
+          // ISR: the rendered page is regenerated at most once an hour, so
+          // the tracker follows GitHub without a redeploy.
+          next: { revalidate: 3600 },
         });
 
         if (!res.ok) {
           console.error(`GitHub API error for ${owner}/${repo} (${labels}): ${res.status} ${res.statusText}`);
+          failedQueries += 1;
           continue;
         }
 
@@ -90,6 +97,7 @@ export async function fetchSecurityFindings() {
         }
       } catch (err) {
         console.error(`Failed to fetch issues for ${owner}/${repo} (${labels}):`, err.message);
+        failedQueries += 1;
       }
     }
 
@@ -130,5 +138,5 @@ export async function fetchSecurityFindings() {
 
   const fetchedAt = new Date().toISOString();
 
-  return { findings: allFindings, fetchedAt };
+  return { findings: allFindings, fetchedAt, failedQueries, totalQueries };
 }
