@@ -5,7 +5,12 @@ import { fetchSecurityFindings } from './lib/github';
 
 const cspDirectives = [
   { directive: "script-src 'self'", compatible: true, note: 'No eval(), no new Function(), no inline scripts' },
-  { directive: "style-src 'self'", compatible: true, note: 'All styles via CSS custom properties and stylesheets' },
+  {
+    directive: "style-src 'self'",
+    compatible: false,
+    requires: "'unsafe-inline'",
+    note: "The renderers set inline style attributes on cells and events, and the component injects a <style> element into its open shadow root. Every interpolated value passes through escapeHTML() / sanitizeColor(), but hashes and nonces are not supported yet, so a page must allow style-src 'unsafe-inline'.",
+  },
   { directive: "img-src 'self'", compatible: true, note: 'No dynamic image loading from external sources' },
   { directive: "connect-src 'self'", compatible: true, note: 'ICS fetch respects connect-src (configurable)' },
   { directive: "object-src 'none'", compatible: true, note: 'No plugins, embeds, or applets' },
@@ -32,11 +37,14 @@ export default async function Home() {
           <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
             Transparent security analysis of forceCalendar&apos;s codebase. Built for environments where security is non-negotiable.
           </p>
+          <p className="mt-4 text-xs text-slate-400 dark:text-slate-500 font-mono">
+            Last verified 30 August 2026 · core 2.5.2 · interface 1.7.0 · react 0.3.0 · vue 0.3.0
+          </p>
           <div className="mt-8 p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 text-left max-w-2xl mx-auto">
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
               This is not a marketing page. This audit documents real findings, including open vulnerabilities
-              and their remediation status. We believe transparency builds more trust than a clean report
-              that hides issues.
+              and their remediation status, and states plainly where the library needs a relaxed policy. We believe
+              transparency builds more trust than a clean report that hides issues.
             </p>
           </div>
         </div>
@@ -128,32 +136,52 @@ export default async function Home() {
               </p>
               <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800 mb-4">
                 <div className="px-4 py-3 text-center">
-                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">82</div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Alerts Resolved (core)</div>
-                </div>
-                <div className="px-4 py-3 text-center">
                   <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">0</div>
                   <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Open Alerts (core)</div>
                 </div>
                 <div className="px-4 py-3 text-center">
-                  <div className="text-xl font-bold text-amber-600 dark:text-amber-400 tracking-tight font-mono">3</div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Dev-Only Remaining (interface)</div>
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">0</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Open Alerts (interface)</div>
+                </div>
+                <div className="px-4 py-3 text-center">
+                  <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">4/4</div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1">Packages with provenance</div>
                 </div>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                The 3 remaining alerts are dev-only transitive dependencies (<span className="font-mono text-xs">vite</span> in
-                the interface build tooling) that do not affect published packages or runtime behavior.
-                These will be resolved when upstream tooling releases updates. Counts as of July 2026,
-                from GitHub Dependabot.
+                On 30 August 2026 the dev-dependency trees of core, interface and vue were updated to clear the
+                outstanding <span className="font-mono text-xs">npm audit</span> high-severity advisories
+                (<span className="font-mono text-xs">brace-expansion</span>, <span className="font-mono text-xs">js-yaml</span>,{' '}
+                <span className="font-mono text-xs">nanoid</span>, <span className="font-mono text-xs">postcss</span>).
+                Through July 2026, 82 Dependabot alerts had been resolved on core; none of them affected a published
+                package or runtime behavior. Counts as of 30 August 2026, from GitHub Dependabot.
+              </p>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="font-medium text-slate-900 dark:text-white mb-3 text-sm">Signed build provenance</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                All four packages (<span className="font-mono text-xs">core</span>, <span className="font-mono text-xs">interface</span>,{' '}
+                <span className="font-mono text-xs">react</span>, <span className="font-mono text-xs">vue</span>) are published from GitHub
+                Actions with OIDC trusted publishing and <span className="font-mono text-xs">npm publish --provenance</span>. Each release
+                carries a SLSA provenance attestation (<span className="font-mono text-xs">https://slsa.dev/provenance/v1</span>) tying the
+                tarball on npm to the workflow run and commit that produced it. core and interface are additionally published to GitHub Packages.
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                Verify: <span className="font-mono text-xs">npm view @forcecalendar/core dist.attestations</span> prints the attestation URL
+                and provenance predicate type; <span className="font-mono text-xs">npm audit signatures</span> checks the registry signatures
+                and attestations of everything in your lockfile.
               </p>
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
               <p className="text-xs text-slate-400 dark:text-slate-500">
                 Verified by running <span className="font-mono text-xs">npm ls --all --json</span> on{' '}
-                <span className="font-mono text-xs">@forcecalendar/core</span> and{' '}
-                <span className="font-mono text-xs">@forcecalendar/interface</span>.
+                <span className="font-mono text-xs">@forcecalendar/core</span> 2.5.2 and{' '}
+                <span className="font-mono text-xs">@forcecalendar/interface</span> 1.7.0.
                 Both packages list zero <span className="font-mono text-xs">dependencies</span> in their package.json.
+                <span className="font-mono text-xs">@forcecalendar/react</span> and <span className="font-mono text-xs">@forcecalendar/vue</span> 0.3.0
+                also ship zero runtime dependencies and declare their framework as a peer dependency.
               </p>
             </div>
           </div>
@@ -170,8 +198,10 @@ export default async function Home() {
             <div className="p-6 border-b border-slate-200 dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                 forceCalendar was built specifically for strict CSP environments, including Salesforce Locker Service
-                -- one of the most restrictive JavaScript sandboxes in production use. The library uses no patterns
-                that would violate common CSP directives.
+                -- one of the most restrictive JavaScript sandboxes in production use. Script execution uses no
+                pattern that a strict CSP forbids. Styling needs one relaxation, <span className="font-mono text-xs">style-src &apos;unsafe-inline&apos;</span>,
+                which is stated in the table rather than glossed over. <span className="font-mono text-xs">@forcecalendar/core</span> is
+                DOM-free and imposes no CSP requirement.
               </p>
             </div>
 
@@ -188,8 +218,12 @@ export default async function Home() {
                   {cspDirectives.map((row, i) => (
                     <tr key={i}>
                       <td className="font-mono text-xs text-slate-700 dark:text-slate-300">{row.directive}</td>
-                      <td>
-                        <span className="badge badge-green">Compatible</span>
+                      <td className="whitespace-nowrap">
+                        {row.compatible ? (
+                          <span className="badge badge-green">Compatible</span>
+                        ) : (
+                          <span className="badge badge-yellow">Requires {row.requires}</span>
+                        )}
                       </td>
                       <td className="text-sm text-slate-500 dark:text-slate-400">{row.note}</td>
                     </tr>
@@ -646,7 +680,9 @@ export default async function Home() {
                 <span className="font-mono text-xs">@forcecalendar/interface</span> as published on npm.
                 The Salesforce LWC wrapper, documentation site, and benchmark tooling are out of scope.
                 This is a self-assessment, not a third-party audit. We encourage independent security researchers
-                to verify these findings.
+                to verify these findings. Vulnerabilities should be reported privately through GitHub as described in the{' '}
+                <a href="https://github.com/forceCalendar/.github/blob/main/SECURITY.md" className="underline decoration-slate-300 dark:decoration-slate-600 hover:text-slate-900 dark:hover:text-white">security policy</a>,
+                never as a public issue.
               </p>
             </div>
           </div>
