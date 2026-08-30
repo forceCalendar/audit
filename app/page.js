@@ -13,7 +13,7 @@ export const revalidate = 3600;
 const LAST_VERIFIED = '30 August 2026';
 
 const VERSIONS = [
-  { pkg: '@forcecalendar/core', version: '2.5.2' },
+  { pkg: '@forcecalendar/core', version: '2.5.3' },
   { pkg: '@forcecalendar/interface', version: '1.7.0' },
   { pkg: '@forcecalendar/react', version: '0.3.0' },
   { pkg: '@forcecalendar/vue', version: '0.3.0' },
@@ -134,7 +134,39 @@ const RESOLVED_FINDINGS = [
 //     resolution: 'Fixed in vX.Y.Z',
 //     status: 'Resolved' | 'In Progress' | 'Open',
 //   }
-const PENDING_FINDINGS = [];
+const PENDING_FINDINGS = [
+  {
+    id: 'monthly-byday-loop',
+    title: 'Recurrence Expansion / CPU Denial of Service',
+    component: '@forcecalendar/core',
+    summary:
+      'A spec-valid MONTHLY rule with a signed or lowercase BYDAY value (for example FREQ=MONTHLY;BYDAY=+1MO) was parsed but not recognised by the expansion engines, so the weekday search never terminated. Any expansion path, including events imported from an ICS feed, could block the process indefinitely.',
+    points: [
+      'Fixed in v2.5.3: BYDAY values are canonicalised and validated at parse time; unknown weekdays are rejected with an error',
+      'Every weekday search loop in both engines is bounded to seven iterations',
+      'Regression test expands the affected rule forms inside a child process with a time budget',
+    ],
+    issue: { url: 'https://github.com/forceCalendar/core/issues/183', label: 'core#183' },
+    resolution: 'Resolved in v2.5.3',
+    status: 'Resolved',
+  },
+  {
+    id: 'ssrf-ipv6',
+    title: 'URL Handling / SSRF (IPv6 literals)',
+    component: '@forcecalendar/core',
+    summary:
+      'The ICS feed URL guard only understood dotted IPv4 literals and a few IPv6 prefixes. IPv4-mapped IPv6 literals in hexadecimal form, NAT64 addresses and other embedded-IPv4 forms passed validation, and hosts containing a colon skipped the DNS re-check, so importFromURL and subscribe could reach loopback, link-local and other internal addresses.',
+    points: [
+      'Fixed in v2.5.3: IPv6 literals are parsed in full and judged by the address they denote; mapped, compatible, translated, NAT64 and 6to4 forms are checked as the embedded IPv4 address',
+      'Loopback, unspecified, link-local, unique-local, site-local, multicast and documentation ranges are refused; unparseable literals fail closed',
+      'DNS re-check now runs for every non-literal host in Node; redirect targets are validated and their bodies discarded when rejected',
+      'Known limitation: the DNS-rebinding window between the lookup and the request remains (closing it needs a custom network agent, which conflicts with the zero-dependency constraint)',
+    ],
+    issue: { url: 'https://github.com/forceCalendar/core/issues/184', label: 'core#184' },
+    resolution: 'Resolved in v2.5.3',
+    status: 'Resolved',
+  },
+];
 
 const statusTone = { Resolved: 'ok', 'In Progress': 'warn', Open: 'bad' };
 
