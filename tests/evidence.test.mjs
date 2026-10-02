@@ -20,13 +20,13 @@ test('public evidence pins every release and separates source from npm provenanc
   assert.ok(evidence.limitations.length >= 5);
 });
 
-test('the latest core release preserves known correctness limits and older consumer scope', () => {
+test('the latest core release preserves known correctness limits and actual-release consumer scope', () => {
   const core = evidence.packages[0];
   assert.equal(core.tarball.runtimeFilesMatched, 22);
   assert.match(core.tarball.sha256, /^[a-f0-9]{64}$/);
   assert.match(core.tests, /696/);
   assert.match(core.knownLimitations.releaseCandidateFullSuite['America/Los_Angeles'], /25\/26/);
   assert.match(core.knownLimitations.releaseCandidateFullSuite['Asia/Kolkata'], /25\/26/);
-  assert.equal(evidence.consumerCheck.packages['@forcecalendar/core'], '2.5.6');
-  assert.match(evidence.consumerCheck.scope, /Earlier/);
+  assert.equal(evidence.consumerCheck.packages['@forcecalendar/core'], '2.5.7');
+  assert.match(evidence.consumerCheck.scope, /Final clean consumer/);
 });

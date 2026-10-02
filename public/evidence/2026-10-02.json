@@ -123,7 +123,7 @@
           "predicateType": "https://slsa.dev/provenance/v1"
         }
       },
-      "tests": "37/37 tests on the published tarball; Bundler and NodeNext declarations passed; prepublish React 18.3.1 and 19.3 compatibility checks passed",
+      "tests": "37/37 published-tarball runtime tests with React 19.3.0 and 37/37 with React 18.3.1, both against actual core 2.5.7 and interface 1.9.0; Bundler and NodeNext declarations passed; no rebuild",
       "audit": {
         "command": "npm audit --json",
         "scope": "repository lockfile, including development dependencies",
@@ -157,7 +157,7 @@
           "predicateType": "https://slsa.dev/provenance/v1"
         }
       },
-      "tests": "33/33 tests on the published tarball; Bundler and NodeNext declarations passed; Vue 3.5.43",
+      "tests": "33/33 published-tarball runtime tests with Vue 3.5.43 against actual core 2.5.7 and interface 1.9.0; Bundler and NodeNext declarations passed; no rebuild",
       "audit": {
         "command": "npm audit --json",
         "scope": "repository lockfile, including development dependencies",
@@ -178,12 +178,12 @@
     "Peer dependencies belong to the consuming application and must be assessed there.",
     "No fresh independent penetration test, Snyk scan, Dependabot alert API query or Salesforce browser/CSP validation was performed in this refresh.",
     "The issue tracker lists public labelled issues only; closed-as-not-planned is not counted as a fix.",
-    "Core 2.5.7 release source tests are backed by byte-for-byte comparison of all 22 runtime JavaScript files in its actual npm tarball. Adapter runtime and declaration checks use their extracted published tarballs with core 2.5.6; interface compatibility was rerun with core 2.5.7.",
+    "Core 2.5.7 release source tests are backed by byte-for-byte comparison of all 22 runtime JavaScript files in its actual npm tarball. Adapter runtime and declaration checks use their extracted published tarballs with actual core 2.5.7 and interface 1.9.0; interface compatibility was also rerun with core 2.5.7.",
     "Core 2.5.7 fixes recurrence DST drift, but older host-dependent timezone-conversion failures remain. The full release-candidate suite passed under UTC/Melbourne and passed 25/26 under Los Angeles/Kolkata. Actual release UTC tests and the 696-fixture recurrence matrix pass. Benchmarks are not evidence that these older limitations are fixed."
   ],
   "consumerCheck": {
     "packages": {
-      "@forcecalendar/core": "2.5.6",
+      "@forcecalendar/core": "2.5.7",
       "@forcecalendar/interface": "1.9.0",
       "@forcecalendar/react": "0.3.1",
       "@forcecalendar/vue": "0.3.1",
@@ -209,7 +209,7 @@
         "total": 28
       }
     },
-    "scope": "Earlier consumer and adapter-tarball verification with core 2.5.6. The interface suite was separately repeated with published core 2.5.7."
+    "scope": "Final clean consumer and published-adapter tarball verification with actual core 2.5.7 and interface 1.9.0. Extracted adapter dist files remained byte-identical to their published 0.3.1 tarballs."
   },
   "auditWebsite": {
     "repository": "https://github.com/forceCalendar/audit",
@@ -234,5 +234,5 @@
     },
     "remediation": "Next 16.2.10 to 16.3.8; PostCSS minimum 8.5.28 plus compatible updates for vulnerable browserslist, nanoid, postcss-selector-parser, baseline-browser-mapping and sharp dependencies. No major framework migration."
   },
-  "verifiedAt": "2026-10-02T11:58:00Z"
+  "verifiedAt": "2026-10-02T12:05:00Z"
 }

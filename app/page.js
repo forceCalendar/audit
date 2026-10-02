@@ -395,7 +395,7 @@ export default async function Home() {
             </div>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               All four public package development lockfiles returned zero known advisories in this refresh.
-              An earlier clean consumer install of core 2.5.6, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
+              A final clean consumer install of core 2.5.7, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
               also returned zero known advisories with React 19.3.0 and Vue 3.5.43.
               The interface suite was also rerun with core 2.5.7. This is a dated npm advisory result, not a live Dependabot alert count or a guarantee of security.
               The website has its own Next.js dependency tree, assessed separately below.
