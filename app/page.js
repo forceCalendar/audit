@@ -269,7 +269,7 @@ export default async function Home() {
                 {pkg.audit.scope}. {pkg.checks.lintWarnings !== undefined
                   ? `Lint: ${pkg.checks.lintErrors} errors, ${pkg.checks.lintWarnings} warnings.`
                   : 'No dedicated lint or benchmark script in the adapter repositories.'}
-                {pkg.checks.lineCoveragePercent && ` Line coverage: ${pkg.checks.lineCoveragePercent}%.`}
+                {pkg.checks.lineCoveragePercent && ` Earlier coverage run: ${pkg.checks.lineCoveragePercent}%.`}
               </p>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
                 <a href={`${pkg.repository}/commit/${pkg.testedCommit}`} className="link-quiet">Tested source {pkg.testedCommit.slice(0, 7)}</a>
@@ -279,6 +279,19 @@ export default async function Home() {
             </Card>
           ))}
         </div>
+        <Card tone="sunken" className="mt-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <h3 className="text-[15px] font-medium text-fg">Timezone correctness: fix and remaining limits</h3>
+            <Pill tone="warn">Known limitations</Pill>
+          </div>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Core 2.5.7 fixes the recurrence daylight-saving drift in <a href="https://github.com/forceCalendar/core/pull/195" className="link">core #195</a>.
+            The actual release passes 696 cross-host recurrence fixtures and all 26 integration files under UTC.
+            Older timezone-conversion failures remain: the full release-candidate suite passed 26/26 under UTC
+            and Melbourne, but 25/26 under Los Angeles and Kolkata. Published runtime code matches that candidate
+            apart from its version constant. This refresh does not claim complete timezone correctness.
+          </p>
+        </Card>
         <Card tone="sunken" className="mt-6">
           <h3 className="text-[15px] font-medium text-fg">Scope matters</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -354,15 +367,15 @@ export default async function Home() {
               <p className="text-sm leading-relaxed text-muted">
                 Each pinned npm version exposes an attestation endpoint with a SLSA v1 provenance predicate.
                 Metadata presence is distinct from cryptographic verification. Fresh <Code>npm audit signatures</Code>
-                checks of the core and interface development trees verified 83 and 503 package signatures,
-                and 17 and 128 attestations, respectively. These counts describe those installed trees,
+                checks verified 83 signatures / 17 attestations for the core 2.5.7 development tree. The earlier
+                interface tree check with core 2.5.6 verified 503 signatures / 128 attestations. These counts describe those installed trees,
                 not four individual release attestations.
               </p>
             </CardSection>
             <CardSection tone="sunken">
               <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Verify it yourself</div>
               <pre className="overflow-x-auto rounded-md bg-code-bg p-3.5 font-mono text-[12.5px] leading-relaxed text-code-fg ring-1 ring-code-border">
-                <span className="text-code-muted">$ </span>npm view @forcecalendar/core@2.5.6 dist.attestations{'\n'}
+                <span className="text-code-muted">$ </span>npm view @forcecalendar/core@2.5.7 dist.attestations{'\n'}
                 <span className="text-code-muted">$ </span>npm audit signatures
               </pre>
               <p className="mt-2.5 text-xs leading-relaxed text-subtle">
@@ -382,9 +395,9 @@ export default async function Home() {
             </div>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               All four public package development lockfiles returned zero known advisories in this refresh.
-              A clean consumer install of core 2.5.6, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
+              An earlier clean consumer install of core 2.5.6, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
               also returned zero known advisories with React 19.3.0 and Vue 3.5.43.
-              This is a dated npm advisory result, not a live Dependabot alert count or a guarantee of security.
+              The interface suite was also rerun with core 2.5.7. This is a dated npm advisory result, not a live Dependabot alert count or a guarantee of security.
               The website has its own Next.js dependency tree, assessed separately below.
             </p>
           </CardSection>
