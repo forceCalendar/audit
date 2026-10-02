@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "verifiedDate": "2026-10-02",
+  "environment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "os": "Linux"
+  },
+  "scope": "Public package registry metadata, repository dependency audits and automated tests. Not an independent security audit.",
+  "packages": [
+    {
+      "pkg": "@forcecalendar/core",
+      "version": "2.5.7",
+      "repository": "https://github.com/forceCalendar/core",
+      "testedCommit": "5ab4dfe83000c81c885205858a427ba690e3e2f8",
+      "registryGitHead": "5ab4dfe83000c81c885205858a427ba690e3e2f8",
+      "runtimeDependencies": {},
+      "peerDependencies": {},
+      "integrity": "sha512-u8R8oIl0GfcFDN/v8EELA/lebMaqjv/pfbyEFweaBumN1DcaQzCC/2BpcXoUkHINzDILnNVSf/pITHZsdA4Png==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2fcore@2.5.7",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "26/26 integration test files and declaration checks passed under UTC, including 696 cross-host recurrence fixtures; all 22 published runtime JavaScript files match the tested release source",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "lockfileSha256": "0c8224291b5567db294888cd4cfd7ec31333d02d819283b91074c0f0442d220d"
+      },
+      "checks": {
+        "lintErrors": 0,
+        "lintWarnings": 4,
+        "format": "passed",
+        "verifiedRegistrySignatures": 83,
+        "verifiedAttestations": 17
+      },
+      "tarball": {
+        "sha256": "59f497897ff0293addaf5f56300a74ee40ea55ba266956efe706a8a8870ef85a",
+        "runtimeFilesMatched": 22,
+        "releaseWorkflow": "https://github.com/forceCalendar/core/actions/runs/37003322741",
+        "fix": "https://github.com/forceCalendar/core/pull/195"
+      },
+      "knownLimitations": {
+        "summary": "Legacy timezone-conversion integration failures remain for Los Angeles and Kolkata hosts. The recurrence DST fix is not a claim of complete timezone correctness.",
+        "source": "https://github.com/forceCalendar/core/pull/195",
+        "releaseCandidateFullSuite": {
+          "UTC": "26/26",
+          "Australia/Melbourne": "26/26",
+          "America/Los_Angeles": "25/26; legacy timezone conversion integration fails",
+          "Asia/Kolkata": "25/26; legacy timezone conversion integration fails"
+        },
+        "scope": "Cross-host full-suite results are from the release candidate; published runtime JavaScript matches that candidate apart from the version constant. The complete UTC suite, including the 696-fixture recurrence matrix, was rerun on the actual release source."
+      }
+    },
+    {
+      "pkg": "@forcecalendar/interface",
+      "version": "1.9.0",
+      "repository": "https://github.com/forceCalendar/interface",
+      "testedCommit": "6e3f6dec66fa13c89fe43f0317fc05b5816b6e92",
+      "registryGitHead": "8763c8cdd84f4ed6460d62d8c44531c90633750c",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "@forcecalendar/core": ">=2.0.0"
+      },
+      "integrity": "sha512-pJWww/CZkPcuEvFaSGCUuXfj+ivhaP0fSADQ36OhM/u/IUKyPXBo1m8eI+zqGZJpLfmynS0W3rFIvgmu+QwGsg==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2finterface@1.9.0",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "291/291 tests in 20 suites; declaration checks passed; repeated with actual published core 2.5.7",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "checks": {
+        "lintErrors": 0,
+        "lintWarnings": 12,
+        "lineCoveragePercent": 84.08,
+        "build": "passed",
+        "buildCheck": "passed",
+        "verifiedRegistrySignatures": 503,
+        "verifiedAttestations": 128,
+        "lineCoverageNote": "84.08% belongs to the earlier coverage run with the original development lockfile; the core 2.5.7 compatibility repeat did not rerun coverage.",
+        "signatureScope": "Earlier interface development-tree verification with core 2.5.6; the later core 2.5.7 compatibility run did not repeat this tree signature check."
+      }
+    },
+    {
+      "pkg": "@forcecalendar/react",
+      "version": "0.3.1",
+      "repository": "https://github.com/forceCalendar/react",
+      "testedCommit": "4f4741f3f1114a86ab56a6321ea9d0dc1a42c70d",
+      "registryGitHead": "4f4741f3f1114a86ab56a6321ea9d0dc1a42c70d",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "react": ">=18",
+        "@forcecalendar/core": ">=2.0.0 <3",
+        "@forcecalendar/interface": ">=1.6.0 <2"
+      },
+      "integrity": "sha512-CcOR3Ei5j3vJpVLVS/ZlbMjO8CJAcbYBssBN8VkpCJ92GW0w+Odu/vgiDjt4Zc8c5vpAtfF6M7teg1DaiaqGQw==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2freact@0.3.1",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "37/37 tests on the published tarball; Bundler and NodeNext declarations passed; prepublish React 18.3.1 and 19.3 compatibility checks passed",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "checks": {}
+    },
+    {
+      "pkg": "@forcecalendar/vue",
+      "version": "0.3.1",
+      "repository": "https://github.com/forceCalendar/vue",
+      "testedCommit": "90cb6a8542398d1d904ce720987ab86e89559523",
+      "registryGitHead": "90cb6a8542398d1d904ce720987ab86e89559523",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "vue": ">=3.3",
+        "@forcecalendar/core": ">=2.0.0 <3",
+        "@forcecalendar/interface": ">=1.6.0 <2"
+      },
+      "integrity": "sha512-qdKB36VlDXaeszrrnuK47YmI0Aj+xKe/sjgBgQmKCZV1Gz9JKIbLiiehTWntAXlFvqySNACWLlHr/lwxwxktxQ==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2fvue@0.3.1",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "33/33 tests on the published tarball; Bundler and NodeNext declarations passed; Vue 3.5.43",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "checks": {}
+    }
+  ],
+  "limitations": [
+    "Zero known dependency advisories is not proof that application code is vulnerability-free.",
+    "Peer dependencies belong to the consuming application and must be assessed there.",
+    "No fresh independent penetration test, Snyk scan, Dependabot alert API query or Salesforce browser/CSP validation was performed in this refresh.",
+    "The issue tracker lists public labelled issues only; closed-as-not-planned is not counted as a fix.",
+    "Core 2.5.7 release source tests are backed by byte-for-byte comparison of all 22 runtime JavaScript files in its actual npm tarball. Adapter runtime and declaration checks use their extracted published tarballs with core 2.5.6; interface compatibility was rerun with core 2.5.7.",
+    "Core 2.5.7 fixes recurrence DST drift, but older host-dependent timezone-conversion failures remain. The full release-candidate suite passed under UTC/Melbourne and passed 25/26 under Los Angeles/Kolkata. Actual release UTC tests and the 696-fixture recurrence matrix pass. Benchmarks are not evidence that these older limitations are fixed."
+  ],
+  "consumerCheck": {
+    "packages": {
+      "@forcecalendar/core": "2.5.6",
+      "@forcecalendar/interface": "1.9.0",
+      "@forcecalendar/react": "0.3.1",
+      "@forcecalendar/vue": "0.3.1",
+      "react": "19.3.0",
+      "vue": "3.5.43"
+    },
+    "result": "Package-root ESM imports and package.json exports/version assertions passed",
+    "audit": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 29,
+        "dev": 0,
+        "optional": 0,
+        "peer": 0,
+        "peerOptional": 0,
+        "total": 28
+      }
+    },
+    "scope": "Earlier consumer and adapter-tarball verification with core 2.5.6. The interface suite was separately repeated with published core 2.5.7."
+  },
+  "auditWebsite": {
+    "repository": "https://github.com/forceCalendar/audit",
+    "baseCommit": "726506cdf09fd5d944f2c303217b9a4cfb979096",
+    "lockfileSha256": "1977883a89e40cf2c2f10595b54bb7103ed238d89b54e814164c99311305994a",
+    "scope": "Audit website dependency tree, separate from library packages",
+    "before": {
+      "info": 0,
+      "low": 1,
+      "moderate": 1,
+      "high": 4,
+      "critical": 1,
+      "total": 7
+    },
+    "after": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "remediation": "Next 16.2.10 to 16.3.8; PostCSS minimum 8.5.28 plus compatible updates for vulnerable browserslist, nanoid, postcss-selector-parser, baseline-browser-mapping and sharp dependencies. No major framework migration."
+  },
+  "verifiedAt": "2026-10-02T11:58:00Z"
+}

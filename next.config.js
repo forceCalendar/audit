@@ -4,6 +4,9 @@ const nextConfig = {
   // tracker refreshes from GitHub without a redeploy; a static export would
   // freeze it at build time.
   reactStrictMode: true,
+  // This small ISR site does not need parallel prerender workers. Keep CI
+  // memory bounded when multiple package checks run on the same executor.
+  experimental: { cpus: 1 },
   async headers() {
     return [
       {
