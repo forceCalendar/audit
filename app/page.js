@@ -3,6 +3,7 @@ import Footer from '../components/Footer';
 import RemediationTracker from '../components/RemediationTracker';
 import { Section, SectionHeader, Eyebrow, Card, CardSection, StatRow, StatTile, Pill, Code, PlusList } from '../components/ui';
 import { fetchSecurityFindings } from './lib/github';
+import evidence from '../public/evidence/2026-10-02.json';
 
 // The tracker is fetched from GitHub on the server and the rendered page is
 // regenerated at most once an hour (ISR), so it stays current without a
@@ -10,14 +11,8 @@ import { fetchSecurityFindings } from './lib/github';
 // in LAST_VERIFIED.
 export const revalidate = 3600;
 
-const LAST_VERIFIED = '30 August 2026';
-
-const VERSIONS = [
-  { pkg: '@forcecalendar/core', version: '2.5.3' },
-  { pkg: '@forcecalendar/interface', version: '1.7.0' },
-  { pkg: '@forcecalendar/react', version: '0.3.0' },
-  { pkg: '@forcecalendar/vue', version: '0.3.0' },
-];
+const LAST_VERIFIED = '2 October 2026';
+const VERSIONS = evidence.packages;
 
 // status: 'compatible' | 'requires'. A "requires" row names the relaxation a
 // host page must grant; it is never shown as compatible.
@@ -236,7 +231,7 @@ export default async function Home() {
             </p>
             <dl className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-subtle animate-fade-up [animation-delay:180ms]">
               <div className="flex items-center gap-1.5">
-                <dt>Last verified</dt>
+                <dt>Package checks refreshed</dt>
                 <dd className="font-medium text-fg tabular">{LAST_VERIFIED}</dd>
               </div>
               {VERSIONS.map((v) => (
@@ -258,6 +253,44 @@ export default async function Home() {
         </div>
       </header>
 
+      <Section id="evidence">
+        <SectionHeader eyebrow="Current evidence" title="What was checked on 2 October"
+          subtitle="Version-pinned package checks, with the limits of each result stated explicitly. Existing tests can pass while undiscovered bugs remain."
+          aside={<a href="/evidence/2026-10-02.json" className="link text-sm">Download evidence JSON</a>} />
+        <div className="grid gap-6 md:grid-cols-2">
+          {evidence.packages.map((pkg) => (
+            <Card key={pkg.pkg}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-mono text-sm font-medium text-fg">{pkg.pkg} {pkg.version}</h3>
+                <Pill tone="ok">0 known dependency advisories</Pill>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted">{pkg.tests}.</p>
+              <p className="mt-2 text-xs leading-relaxed text-subtle">
+                {pkg.audit.scope}. {pkg.checks.lintWarnings !== undefined
+                  ? `Lint: ${pkg.checks.lintErrors} errors, ${pkg.checks.lintWarnings} warnings.`
+                  : 'No dedicated lint or benchmark script in the adapter repositories.'}
+                {pkg.checks.lineCoveragePercent && ` Line coverage: ${pkg.checks.lineCoveragePercent}%.`}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                <a href={`${pkg.repository}/commit/${pkg.testedCommit}`} className="link-quiet">Tested source {pkg.testedCommit.slice(0, 7)}</a>
+                <a href={`https://www.npmjs.com/package/${pkg.pkg}/v/${pkg.version}`} className="link-quiet">npm {pkg.version}</a>
+                <a href={pkg.attestation.url} className="link-quiet">Registry attestation</a>
+              </div>
+            </Card>
+          ))}
+        </div>
+        <Card tone="sunken" className="mt-6">
+          <h3 className="text-[15px] font-medium text-fg">Scope matters</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            These are known-advisory scans of development lockfiles, automated tests and registry metadata checks.
+            They are not a new line-by-line security review, penetration test or independent certification.
+            Core/interface source checks and adapter tarball checks are distinguished in the downloadable evidence.
+            Performance results belong to the <a href="https://benchmark.forcecalendar.org" className="link">benchmark report</a>;
+            test durations are not benchmarks. Private and unpublished projects are outside this public snapshot.
+          </p>
+        </Card>
+      </Section>
+
       {/* Supply chain */}
       <Section id="supply-chain">
         <SectionHeader
@@ -269,8 +302,8 @@ export default async function Home() {
         <StatRow columns={4}>
           <StatTile value="0" label="Runtime deps · core" tone="ok" />
           <StatTile value="0" label="Runtime deps · interface" tone="ok" />
-          <StatTile value="4 / 4" label="Packages with provenance" tone="ok" />
-          <StatTile value="0" label="Open Dependabot alerts" tone="ok" />
+          <StatTile value="4 / 4" label="Registry attestations present" tone="ok" />
+          <StatTile value="0" label="Known advisories · 4 package locks" tone="ok" />
         </StatRow>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -281,19 +314,19 @@ export default async function Home() {
                 Every dependency is a potential attack vector; the <Code>event-stream</Code>, <Code>ua-parser-js</Code> and{' '}
                 <Code>colors</Code> incidents showed that even popular packages get compromised. <Code>@forcecalendar/core</Code>{' '}
                 and <Code>@forcecalendar/interface</Code> list no <Code>dependencies</Code> at all, so there is no transitive
-                tree to monitor and nothing for <Code>npm audit</Code> to flag in the published packages.
+                ordinary dependency tree in either package. Interface declares core as a peer. Host applications still need to audit their resolved peers, and the packages themselves can contain security bugs.
               </p>
             </CardSection>
             <CardSection tone="sunken">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ok">forceCalendar</div>
-                  <PlusList items={['Zero runtime dependencies', 'No transitive dependency tree', 'No supply chain attack surface', 'Adapters (react, vue): peer dependencies only']} />
+                  <PlusList items={['Zero runtime dependencies', 'No transitive dependency tree', 'Publishing and maintainer risks still apply', 'Adapters: framework and calendar peer dependencies']} />
                 </div>
                 <div>
-                  <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Typical calendar library</div>
+                  <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Remaining responsibilities</div>
                   <ul className="space-y-1.5 text-sm text-muted">
-                    {['30-100+ transitive dependencies', 'Each dependency is an attack vector', 'Vulnerability churn from updates', 'Requires continuous monitoring'].map((t) => (
+                    {['Audit the consuming app and peer dependencies', 'Review package code and publishing workflows', 'Keep development tooling patched', 'Monitor newly disclosed advisories'].map((t) => (
                       <li key={t} className="flex items-start gap-2.5">
                         <span className="mt-[3px] h-3.5 w-3.5 shrink-0 rounded-full bg-sunken text-center font-mono text-[10px] leading-[14px] text-subtle ring-1 ring-inset ring-hairline" aria-hidden>-</span>
                         <span>{t}</span>
@@ -305,9 +338,9 @@ export default async function Home() {
             </CardSection>
             <CardSection>
               <p className="text-xs leading-relaxed text-subtle">
-                Verified by running <Code>npm ls --all --json</Code> on <Code>@forcecalendar/core</Code> 2.5.2 and{' '}
-                <Code>@forcecalendar/interface</Code> 1.7.0. <Code>@forcecalendar/react</Code> and <Code>@forcecalendar/vue</Code> 0.3.0
-                also ship zero runtime dependencies and declare their framework as a peer dependency.
+                Verified from the exact npm version manifests listed above. All four omit ordinary runtime
+                dependencies. Interface declares core as a peer; React and Vue declare their framework, core and
+                interface as peers. Peer installations can introduce additional dependencies in a consuming app.
               </p>
             </CardSection>
           </Card>
@@ -316,20 +349,20 @@ export default async function Home() {
             <CardSection>
               <div className="mb-2 flex items-center justify-between gap-3">
                 <h3 className="text-[15px] font-medium text-fg">Signed build provenance</h3>
-                <Pill tone="ok">SLSA v1</Pill>
+                <Pill tone="ok">Metadata observed</Pill>
               </div>
               <p className="text-sm leading-relaxed text-muted">
-                All four packages are published from GitHub Actions with OIDC trusted publishing and{' '}
-                <Code>npm publish --provenance</Code>. Each release carries a SLSA provenance attestation
-                (<Code>https://slsa.dev/provenance/v1</Code>) that ties the tarball on npm to the exact
-                workflow run and commit that produced it. <Code>core</Code> and <Code>interface</Code> are
-                additionally published to GitHub Packages.
+                Each pinned npm version exposes an attestation endpoint with a SLSA v1 provenance predicate.
+                Metadata presence is distinct from cryptographic verification. Fresh <Code>npm audit signatures</Code>
+                checks of the core and interface development trees verified 83 and 503 package signatures,
+                and 17 and 128 attestations, respectively. These counts describe those installed trees,
+                not four individual release attestations.
               </p>
             </CardSection>
             <CardSection tone="sunken">
               <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Verify it yourself</div>
               <pre className="overflow-x-auto rounded-md bg-code-bg p-3.5 font-mono text-[12.5px] leading-relaxed text-code-fg ring-1 ring-code-border">
-                <span className="text-code-muted">$ </span>npm view @forcecalendar/core dist.attestations{'\n'}
+                <span className="text-code-muted">$ </span>npm view @forcecalendar/core@2.5.6 dist.attestations{'\n'}
                 <span className="text-code-muted">$ </span>npm audit signatures
               </pre>
               <p className="mt-2.5 text-xs leading-relaxed text-subtle">
@@ -345,18 +378,36 @@ export default async function Home() {
           <CardSection>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
               <h3 className="text-[15px] font-medium text-fg">Dev dependency hygiene</h3>
-              <span className="text-xs text-subtle">as of {LAST_VERIFIED}, from GitHub Dependabot</span>
+              <span className="text-xs text-subtle">npm audit · {LAST_VERIFIED}</span>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              While the published packages ship zero runtime dependencies, development tooling (testing, bundling,
-              linting) does use dev dependencies, and Dependabot monitors those. Today there are{' '}
-              <strong className="font-medium text-fg">0 open alerts on core and 0 on interface</strong>. On {LAST_VERIFIED} the
-              dev-dependency trees of core, interface and vue were updated to clear the outstanding{' '}
-              <Code>npm audit</Code> high-severity advisories (<Code>brace-expansion</Code>, <Code>js-yaml</Code>,{' '}
-              <Code>nanoid</Code>, <Code>postcss</Code>). Through July 2026, 82 Dependabot alerts had been resolved on core;
-              none of them affected a published package or runtime behaviour.
+              All four public package development lockfiles returned zero known advisories in this refresh.
+              A clean consumer install of core 2.5.6, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
+              also returned zero known advisories with React 19.3.0 and Vue 3.5.43.
+              This is a dated npm advisory result, not a live Dependabot alert count or a guarantee of security.
+              The website has its own Next.js dependency tree, assessed separately below.
             </p>
           </CardSection>
+        </Card>
+      </Section>
+
+      <Section id="website" divider>
+        <SectionHeader eyebrow="Separate website check" title="This dashboard has dependencies too" />
+        <Card>
+          <p className="text-sm leading-relaxed text-muted">
+            The dashboard&apos;s original lockfile returned {evidence.auditWebsite.before.total} vulnerable dependencies:
+            {' '}{evidence.auditWebsite.before.critical} critical, {evidence.auditWebsite.before.high} high,
+            {' '}{evidence.auditWebsite.before.moderate} moderate and {evidence.auditWebsite.before.low} low.
+            This is separate from the zero-advisory library-package scans. Targeted compatible updates to Next.js,
+            PostCSS and affected transitive dependencies reduced the dashboard lockfile scan to
+            {' '}<strong className="font-medium text-fg">{evidence.auditWebsite.after.total} known advisories</strong>.
+            Advisory severity does not by itself establish exploitability in this application.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-subtle">
+            Next.js 16.3.8 · PostCSS 8.5.28 · {LAST_VERIFIED}. The downloadable evidence preserves both scan
+            summaries and the refreshed lockfile hash. These results describe this source revision;
+            they do not establish the version deployed by an independently operated mirror.
+          </p>
         </Card>
       </Section>
 
@@ -365,7 +416,7 @@ export default async function Home() {
         <SectionHeader
           eyebrow="Content Security Policy"
           title="What the library needs from your CSP"
-          subtitle="Script execution is fully CSP-clean. Styling needs one relaxation, stated below rather than glossed over."
+          subtitle="Previously documented library behavior. Browser CSP and Salesforce deployment checks were not rerun in this package refresh."
         />
 
         <Card padding="none" className="overflow-hidden">
@@ -411,7 +462,7 @@ export default async function Home() {
           <CardSection tone="sunken">
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
               <div className="min-w-0">
-                <h3 className="mb-1.5 text-[15px] font-medium text-fg">Minimum policy for @forcecalendar/interface 1.7.0</h3>
+                <h3 className="mb-1.5 text-[15px] font-medium text-fg">Documented policy for @forcecalendar/interface</h3>
                 <pre className="overflow-x-auto rounded-md bg-code-bg p-3.5 font-mono text-[12.5px] leading-relaxed text-code-fg ring-1 ring-code-border">
                   script-src &apos;self&apos;;{'\n'}style-src &apos;self&apos; &apos;unsafe-inline&apos;;
                 </pre>
@@ -442,8 +493,8 @@ export default async function Home() {
 
           <CardSection>
             <p className="text-xs leading-relaxed text-subtle">
-              Salesforce Locker Service compatibility has been verified in production deployments. The library runs in
-              Lightning Web Components without CSP violations.
+              Earlier assessments reported Salesforce Locker Service compatibility. This refresh did not repeat those
+              deployment checks. The audit website itself uses inline scripts and has a different CSP from the library.
             </p>
           </CardSection>
         </Card>
@@ -591,7 +642,7 @@ export default async function Home() {
       <Section id="remediation" tone="sunken">
         <SectionHeader
           eyebrow="Remediation tracker"
-          title="Every reported finding"
+          title="Public tracked findings"
           subtitle="Pulled from GitHub Issues on the server and regenerated hourly. Counts are always shown in full; only the long tail of resolved rows is folded."
         />
         <RemediationTracker findings={findings} fetchedAt={fetchedAt} failedQueries={failedQueries} totalQueries={totalQueries} />
@@ -606,10 +657,10 @@ export default async function Home() {
               <h3 className="mb-3 text-[15px] font-medium text-fg">Audit approach</h3>
               <ol className="space-y-2.5 text-sm text-muted">
                 {[
-                  ['Manual code review', 'line-by-line analysis of core and interface, focusing on input handling, DOM manipulation, and data flow'],
-                  ['Dependency analysis', <>verification of the zero-dependency claim via <Code>npm ls</Code> and package.json inspection, plus provenance attestations on the registry</>],
-                  ['CSP compatibility testing', 'deployment and validation in Salesforce Locker Service and behind strict CSP headers'],
-                  ['Attack surface mapping', 'identification of all input vectors, trust boundaries, and data flows'],
+                  ['Automated regression checks', 'existing core and interface suites; published adapter tarball runtime and declaration checks'],
+                  ['Dependency analysis', <>exact registry manifests, development lockfile <Code>npm audit</Code> results, and core/interface tree signature checks</>],
+                  ['Historical findings', 'previously published security findings and CSP notes retained with their original scope; no new Salesforce or browser CSP validation'],
+                  ['Public issue tracking', 'paginated GitHub label queries, deduplicated by issue number; partial failures remain visible'],
                 ].map(([title, body], i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <span className="mt-px shrink-0 font-mono text-xs text-subtle tabular">{i + 1}.</span>
@@ -619,7 +670,8 @@ export default async function Home() {
               </ol>
             </div>
             <div className="p-5 sm:p-6">
-              <h3 className="mb-3 text-[15px] font-medium text-fg">Recommended tooling</h3>
+              <h3 className="mb-3 text-[15px] font-medium text-fg">Additional checks to consider</h3>
+              <p className="mb-3 text-xs text-subtle">Listing a tool here does not claim it ran in this refresh. See the evidence above for executed checks.</p>
               <PlusList
                 className="space-y-2.5"
                 items={[
@@ -634,8 +686,9 @@ export default async function Home() {
           <CardSection tone="sunken">
             <h3 className="mb-2 text-[15px] font-medium text-fg">Scope and disclosure</h3>
             <p className="text-sm leading-relaxed text-muted">
-              This audit covers <Code>@forcecalendar/core</Code> and <Code>@forcecalendar/interface</Code> as published on npm.
-              The Salesforce LWC wrapper, documentation site, and benchmark tooling are out of scope. This is a
+              This snapshot covers the four pinned public packages above. The Salesforce LWC wrapper, documentation site,
+              benchmark tooling and private projects are outside the package-security scope. The audit website dependency
+              scan is reported separately. Known-advisory scans cannot establish the absence of code vulnerabilities. This is a
               self-assessment, not a third-party audit. We encourage independent security researchers to verify these
               findings. Vulnerabilities should be reported privately through GitHub as described in the{' '}
               <a href="https://github.com/forceCalendar/.github/blob/main/SECURITY.md" className="link">security policy</a>,

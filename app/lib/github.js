@@ -11,11 +11,8 @@ const LABEL_QUERIES = [
 ];
 
 function extractSeverity(labels) {
-  for (const label of labels) {
-    if (label.name === 'priority:critical') return 'Critical';
-    if (label.name === 'priority:high') return 'High';
-    if (label.name === 'priority:medium') return 'Medium';
-    if (label.name === 'priority:low') return 'Low';
+  for (const severity of ['Critical', 'High', 'Medium', 'Low']) {
+    if (labels.some((label) => label.name === `priority:${severity.toLowerCase()}`)) return severity;
   }
   return 'Unknown';
 }
@@ -47,7 +44,7 @@ function extractDescription(body) {
 }
 
 function deriveStatus(issue) {
-  if (issue.state === 'closed') return 'Resolved';
+  if (issue.state === 'closed') return issue.state_reason === 'not_planned' ? 'Closed (not planned)' : 'Resolved';
   // Check for "in progress" related labels
   for (const label of issue.labels) {
     if (label.name.includes('in-progress') || label.name.includes('wip')) return 'In Progress';
@@ -56,7 +53,7 @@ function deriveStatus(issue) {
   return 'Open';
 }
 
-export async function fetchSecurityFindings() {
+export async function fetchSecurityFindings({ fetcher = fetch } = {}) {
   const allFindings = [];
   // Every query degrades independently; the page reports how many failed so
   // a partial result is never mistaken for a clean one.
@@ -68,32 +65,39 @@ export async function fetchSecurityFindings() {
     const seenIssues = new Map();
 
     for (const labels of LABEL_QUERIES) {
-      const url = `https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=100&sort=created&direction=asc`;
-
       try {
-        const res = await fetch(url, {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'forceCalendar-audit-site',
-          },
-          // ISR: the rendered page is regenerated at most once an hour, so
-          // the tracker follows GitHub without a redeploy.
-          next: { revalidate: 3600 },
-        });
+        let page = 1;
+        while (true) {
+          const url = `https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=100&sort=created&direction=asc&page=${page}`;
+          const res = await fetcher(url, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'forceCalendar-audit-site',
+            },
+            // ISR: the rendered page is regenerated at most once an hour, so
+            // the tracker follows GitHub without a redeploy.
+            next: { revalidate: 3600 },
+            signal: AbortSignal.timeout(15000),
+          });
 
-        if (!res.ok) {
-          console.error(`GitHub API error for ${owner}/${repo} (${labels}): ${res.status} ${res.statusText}`);
-          failedQueries += 1;
-          continue;
-        }
-
-        const issues = await res.json();
-
-        for (const issue of issues) {
-          // Deduplicate by issue number (same issue may match multiple label queries)
-          if (!seenIssues.has(issue.number)) {
-            seenIssues.set(issue.number, issue);
+          if (!res.ok) {
+            console.error(`GitHub API error for ${owner}/${repo} (${labels}): ${res.status} ${res.statusText}`);
+            failedQueries += 1;
+            break;
           }
+
+          const issues = await res.json();
+
+          for (const issue of issues) {
+            // The Issues API also returns pull requests; these are not findings.
+            if (issue.pull_request) continue;
+            // Deduplicate by issue number (same issue may match multiple label queries)
+            if (!seenIssues.has(issue.number)) {
+              seenIssues.set(issue.number, issue);
+            }
+          }
+          if (!res.headers.get('link')?.includes('rel="next"')) break;
+          page += 1;
         }
       } catch (err) {
         console.error(`Failed to fetch issues for ${owner}/${repo} (${labels}):`, err.message);
@@ -101,18 +105,9 @@ export async function fetchSecurityFindings() {
       }
     }
 
-    // Deduplicate by title -- some issues were created twice (e.g. interface #38 and #39)
-    // Keep the latest (highest number) for each unique title
-    const seenTitles = new Map();
+    // Distinct issue numbers remain distinct, even if their titles match.
+    // Otherwise a later closed duplicate could hide an older open finding.
     for (const issue of seenIssues.values()) {
-      const normalizedTitle = issue.title.replace(/^(CRITICAL|HIGH|MEDIUM|LOW):\s*/i, '').trim();
-      const existing = seenTitles.get(normalizedTitle);
-      if (!existing || issue.number > existing.number) {
-        seenTitles.set(normalizedTitle, issue);
-      }
-    }
-
-    for (const issue of seenTitles.values()) {
       allFindings.push({
         number: issue.number,
         title: issue.title,

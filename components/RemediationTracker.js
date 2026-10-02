@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pill } from './ui';
 
 const severityTone = { Critical: 'bad', High: 'warn', Medium: 'accent', Low: 'neutral' };
-const statusTone = { Resolved: 'ok', 'In Progress': 'warn', Open: 'bad' };
+const statusTone = { Resolved: 'ok', 'In Progress': 'warn', Open: 'bad', 'Closed (not planned)': 'neutral' };
 
 // Resolved rows beyond this count per component are folded behind "Show all"
 const VISIBLE_RESOLVED = 6;
@@ -50,7 +50,8 @@ function Row({ f, expanded, hidden = false }) {
 
 function ComponentGroup({ component, repo, findings }) {
   const [showAll, setShowAll] = useState(false);
-  const open = findings.filter((f) => f.status !== 'Resolved');
+  const open = findings.filter((f) => f.status === 'Open' || f.status === 'In Progress');
+  const unplanned = findings.filter((f) => f.status === 'Closed (not planned)');
   const resolved = findings.filter((f) => f.status === 'Resolved');
   const hidden = Math.max(0, resolved.length - VISIBLE_RESOLVED);
 
@@ -60,7 +61,7 @@ function ComponentGroup({ component, repo, findings }) {
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3 className="font-mono text-sm font-medium text-fg">{component}</h3>
           <span className="text-xs text-subtle tabular">
-            {findings.length} findings · {resolved.length} resolved · {open.length} open
+            {findings.length} findings · {resolved.length} resolved · {open.length} open · {unplanned.length} not planned
           </span>
         </div>
         <a href={`https://github.com/${repo}/issues?q=label%3Atype%3Asecurity`} className="link-quiet text-xs">
@@ -82,6 +83,7 @@ function ComponentGroup({ component, repo, findings }) {
           </thead>
           <tbody>
             {open.map((f) => <Row key={f.number} f={f} expanded />)}
+            {unplanned.map((f) => <Row key={f.number} f={f} expanded />)}
             {resolved.map((f, i) => <Row key={f.number} f={f} expanded={showAll} hidden={!showAll && i >= VISIBLE_RESOLVED} />)}
           </tbody>
         </table>
@@ -110,7 +112,9 @@ function ComponentGroup({ component, repo, findings }) {
  */
 export default function RemediationTracker({ findings, fetchedAt, failedQueries = 0, totalQueries = 0 }) {
   const resolvedCount = findings.filter((f) => f.status === 'Resolved').length;
-  const openCount = findings.length - resolvedCount;
+  const openCount = findings.filter((f) => f.status === 'Open' || f.status === 'In Progress').length;
+  const unplannedCount = findings.filter((f) => f.status === 'Closed (not planned)').length;
+  const unavailable = failedQueries === totalQueries && totalQueries > 0;
 
   const groups = [];
   for (const f of findings) {
@@ -127,18 +131,20 @@ export default function RemediationTracker({ findings, fetchedAt, failedQueries 
       {/* Summary metrics */}
       <div className="grid grid-cols-3 gap-px overflow-hidden rounded-t-xl bg-hairline">
         <div className="bg-raised px-4 py-4 text-center sm:py-5">
-          <div className="font-display text-2xl font-semibold tracking-[-0.03em] tabular text-fg sm:text-3xl">{findings.length}</div>
+          <div className="font-display text-2xl font-semibold tracking-[-0.03em] tabular text-fg sm:text-3xl">{unavailable ? '—' : findings.length}</div>
           <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Findings</div>
         </div>
         <div className="bg-raised px-4 py-4 text-center sm:py-5">
-          <div className="font-display text-2xl font-semibold tracking-[-0.03em] tabular text-ok sm:text-3xl">{resolvedCount}</div>
+          <div className="font-display text-2xl font-semibold tracking-[-0.03em] tabular text-ok sm:text-3xl">{unavailable ? '—' : resolvedCount}</div>
           <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Resolved</div>
         </div>
         <div className="bg-raised px-4 py-4 text-center sm:py-5">
-          <div className={`font-display text-2xl font-semibold tracking-[-0.03em] tabular sm:text-3xl ${openCount > 0 ? 'text-warn' : 'text-ok'}`}>{openCount}</div>
+          <div className={`font-display text-2xl font-semibold tracking-[-0.03em] tabular sm:text-3xl ${openCount > 0 ? 'text-warn' : 'text-ok'}`}>{unavailable ? '—' : openCount}</div>
           <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Open</div>
         </div>
       </div>
+
+      {unplannedCount > 0 && <p className="border-t border-hairline px-5 py-3 text-xs text-subtle">{unplannedCount} closed as not planned, not counted as resolved.</p>}
 
       {failedQueries > 0 && (
         <div className="border-t border-hairline bg-warn-soft/60 px-5 py-3 text-xs text-warn sm:px-6">
