@@ -34,23 +34,31 @@ Never as a public issue — see the [security policy](https://github.com/forceCa
 
 ## Dated evidence
 
-The 2 October 2026 refresh is stored in [`public/evidence/2026-10-02.json`](public/evidence/2026-10-02.json) and served at `/evidence/2026-10-02.json`. It records exact versions, tested source commits, distinct npm `gitHead` values, integrity hashes, attestation endpoints, dependency-audit summaries, warnings and limitations. Do not silently rewrite this date to make old results look current.
+The current 4 October 2026 snapshot is [`public/evidence/2026-10-04.json`](public/evidence/2026-10-04.json), served at `/evidence/2026-10-04.json`. The [2 October snapshot](public/evidence/2026-10-02.json) is preserved unchanged as history. Never change the date to make old checks appear current.
 
-- Core 2.5.7: 26 integration files (UTC host) and declarations pass; lint has 4 warnings, no errors.
-- Interface 1.9.0: 291 tests and declarations pass, including a repeat with published core 2.5.7; 84.08% line coverage in the coverage run; lint has 12 warnings, no errors.
-- React / Vue 0.3.1: actual npm tarball runtime tests (37 / 33) and Bundler / NodeNext declarations pass. Peer requirements and consumer checks are recorded separately from ordinary runtime dependencies.
-- All four development-lockfile `npm audit --json` scans report zero known advisories. This does not measure code vulnerabilities or live Dependabot alerts.
-- Core/interface `npm audit signatures` checks verify their installed dependency trees, not a new independent assessment of all release attestations.
-- This audit website's original lockfile had 7 vulnerable dependencies (1 critical, 4 high, 1 moderate, 1 low). Compatible Next 16.3.8 / PostCSS 8.5.28 and targeted transitive updates clear the fresh known-advisory scan. No force fix or major framework migration was used.
+- Published pair: **Core 2.5.7 / Interface 1.9.1**, with exact tested commits, registry gitHead values, SHA-512 integrity and SHA-256 tarball hashes.
+- Core: 26/26 UTC integration files, including 696 cross-host recurrence fixtures, and declarations pass. All 22 published runtime JavaScript files match release source. Quality: 0 lint errors, 4 warnings, formatting passes. Fresh dependency signature check: 83 signatures / 17 attestations.
+- Interface: 298/298 tests in 20 suites and declarations pass with actual core 2.5.7. Fresh line coverage: 84.08%. All 17 published source JavaScript files match release source. Build and formatting pass; lint has 0 errors / 12 warnings. Rebuilt dist bundles are not byte-identical to the published bundles, so source equivalence must not be described as build reproducibility. Fresh tree signature verification is incomplete; earlier counts remain in the archive.
+- Published React/Vue 0.3.1 tarballs: React 19.3.0 and 18.3.1 each pass 37 tests; Vue 3.5.43 passes 33. Six Bundler/NodeNext declaration checks pass with TypeScript 5.9.3 and skipLibCheck false. All use published core 2.5.7/interface 1.9.1, with adapter dist and installed peer files unchanged from the tarballs.
+
+### Current advisory findings
+
+There is **one distinct high-severity braces advisory**, [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), affecting development/build dependency trees:
+
+- Interface development lock: 29 affected npm package entries through Jest/micromatch; production-only scan: 0. These are not 29 distinct vulnerabilities. npm reports compatible dependency-tree fixes, but none were applied or validated in this refresh.
+- Audit website: 5 affected npm package entries through Tailwind 3 tooling; production-only scan: 0. Registry metadata shows no patched braces release. npm suggests a Tailwind 4 major upgrade for most affected paths; no major migration was attempted.
+- Core and original React/Vue repository lock scans: 0. Separate exact-peer compatibility fixtures and the clean production consumer also report 0.
+
+This is a dated known-advisory scan, not a live Dependabot count or proof of vulnerability-free code. The earlier website seven-to-zero cleanup remains correctly recorded in the October 2 archive and is not reused as today's result.
 
 ### Reproduction and scope
 
-Use the exact tested commits in the evidence with Node 24.19.0 and npm 11.9.0. Run `npm ci`, `npm audit --json` and each package's `npm test`; for core run `npm run quality`, and for interface run its build, build check, lint and coverage scripts. The interface compatibility repeat explicitly installs published core 2.5.7 rather than the older core pinned in its original development lockfile. Adapter tarball verification does not rebuild the extracted `dist` files. The source suite's build step and release tarball check are different checks.
+Environment: Linux, Node 24.19.0, npm 11.9.0, TZ=UTC. Use the exact source commits in the evidence. Repository checks use `npm ci`, `npm audit --json`, package test/build/type/quality scripts and production-only `npm audit --omit=dev --json`. The Interface compatibility run overlays published core 2.5.7 rather than its older development-lock peer; its test fixture/toolchain is distinct from the original lockfile advisory scan. Adapter checks run extracted published dist and declarations without invoking scripts that rebuild them. The evidence records fixture lockfile hashes and exact framework/type compiler versions.
 
-Known-advisory results change over time. Registry metadata, source tests, installed-tree signature checks and browser/CSP testing are distinct evidence. This refresh did not run Snyk, query Dependabot alert counts, perform a new line-by-line security review, or repeat Salesforce/browser CSP validation. Private/unpublished code is not included in the public evidence. Performance data lives on the benchmark site and test durations are not used as benchmarks.
+All six consumer ESM roots import under jsdom; bare Node imports pass for core and adapters. The raw interface requires a DOM (`HTMLElement`), and only the adapters export a `package.json` subpath. These are jsdom/SSR checks, not real-browser or Salesforce validation.
 
-The live issue tracker follows all pagination for its documented label queries, excludes pull requests, preserves different issue numbers with matching titles, and never counts a not-planned closure as a fix. Failed queries are shown explicitly. A complete fetch still covers only public issues bearing the configured labels.
+Core's October 2 full release-candidate suites passed 26/26 in UTC/Melbourne and 25/26 in Los Angeles/Kolkata due to legacy conversion failures. Those historical limitations remain; the October 4 refresh reran the unchanged release's UTC suite and recurrence matrix, not every full host suite. No blanket timezone-correctness claim is made.
 
-The final publication refresh pins core 2.5.7 (release commit `5ab4dfe83000c81c885205858a427ba690e3e2f8`). All 22 JavaScript runtime files in its downloaded npm tarball match the release source, and the refreshed release-lock audit and signature check pass. The final adapter/consumer verification also uses actual core 2.5.7: React 19.3.0 and 18.3.1 each pass 37/37, Vue 3.5.43 passes 33/33, both declaration modes pass, and the clean consumer audit reports zero known vulnerabilities. Extracted published adapter files were not rebuilt.
+No new penetration test, Snyk scan, Dependabot alert API query or Salesforce/library-CSP validation was performed. Private projects remain excluded. Benchmark measurements live on the benchmark site, and test durations are not benchmarks. No workflow or security configuration is changed by this refresh.
 
-Known correctness limits remain: the actual-release UTC suite passes all 26 integration files, including 696 cross-host recurrence fixtures. The equivalent release candidate full suite passed 26/26 under UTC/Melbourne but 25/26 under Los Angeles/Kolkata due to older timezone-conversion integration failures. The page and JSON preserve this distinction; no blanket timezone-correctness claim is made.
+The live tracker paginates the documented label queries, excludes PRs, deduplicates by issue number and does not count not-planned closures as fixes. Failed queries remain visible; complete retrieval covers only public issues bearing those labels.
