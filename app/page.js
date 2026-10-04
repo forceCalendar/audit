@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import RemediationTracker from '../components/RemediationTracker';
 import { Section, SectionHeader, Eyebrow, Card, CardSection, StatRow, StatTile, Pill, Code, PlusList } from '../components/ui';
 import { fetchSecurityFindings } from './lib/github';
-import evidence from '../public/evidence/2026-10-02.json';
+import evidence from '../public/evidence/2026-10-04.json';
 
 // The tracker is fetched from GitHub on the server and the rendered page is
 // regenerated at most once an hour (ISR), so it stays current without a
@@ -11,7 +11,8 @@ import evidence from '../public/evidence/2026-10-02.json';
 // in LAST_VERIFIED.
 export const revalidate = 3600;
 
-const LAST_VERIFIED = '2 October 2026';
+const LAST_VERIFIED = '4 October 2026';
+const LOCKS_WITH_FINDINGS = evidence.packages.filter((pkg) => pkg.audit.vulnerabilities.total > 0).length;
 const VERSIONS = evidence.packages;
 
 // status: 'compatible' | 'requires'. A "requires" row names the relaxation a
@@ -254,23 +255,32 @@ export default async function Home() {
       </header>
 
       <Section id="evidence">
-        <SectionHeader eyebrow="Current evidence" title="What was checked on 2 October"
+        <SectionHeader eyebrow="Current evidence" title="What was checked on 4 October"
           subtitle="Version-pinned package checks, with the limits of each result stated explicitly. Existing tests can pass while undiscovered bugs remain."
-          aside={<a href="/evidence/2026-10-02.json" className="link text-sm">Download evidence JSON</a>} />
+          aside={<a href="/evidence/2026-10-04.json" className="link text-sm">Download evidence JSON</a>} />
         <div className="grid gap-6 md:grid-cols-2">
           {evidence.packages.map((pkg) => (
             <Card key={pkg.pkg}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="font-mono text-sm font-medium text-fg">{pkg.pkg} {pkg.version}</h3>
-                <Pill tone="ok">0 known dependency advisories</Pill>
+                <Pill tone={pkg.audit.vulnerabilities.total > 0 ? 'warn' : 'ok'}>
+                  {pkg.audit.vulnerabilities.total > 0 ? `${pkg.audit.vulnerabilities.total} affected dev dependencies` : '0 known dependency advisories'}
+                </Pill>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted">{pkg.tests}.</p>
               <p className="mt-2 text-xs leading-relaxed text-subtle">
                 {pkg.audit.scope}. {pkg.checks.lintWarnings !== undefined
                   ? `Lint: ${pkg.checks.lintErrors} errors, ${pkg.checks.lintWarnings} warnings.`
                   : 'No dedicated lint or benchmark script in the adapter repositories.'}
-                {pkg.checks.lineCoveragePercent && ` Earlier coverage run: ${pkg.checks.lineCoveragePercent}%.`}
+                {pkg.checks.lineCoveragePercent && ` Line coverage: ${pkg.checks.lineCoveragePercent}%.`}
               </p>
+              {pkg.audit.uniqueAdvisories?.length > 0 && (
+                <p className="mt-3 text-sm leading-relaxed text-warn">
+                  {pkg.audit.uniqueAdvisories.length} distinct advisory in development/test tooling.{' '}
+                  <a className="link" href={pkg.audit.uniqueAdvisories[0].url}>{pkg.audit.uniqueAdvisories[0].url.split('/').pop()}</a>.
+                  The production-only scan reports {pkg.audit.productionOnly.total} affected dependencies.
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
                 <a href={`${pkg.repository}/commit/${pkg.testedCommit}`} className="link-quiet">Tested source {pkg.testedCommit.slice(0, 7)}</a>
                 <a href={`https://www.npmjs.com/package/${pkg.pkg}/v/${pkg.version}`} className="link-quiet">npm {pkg.version}</a>
@@ -286,10 +296,10 @@ export default async function Home() {
           </div>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Core 2.5.7 fixes the recurrence daylight-saving drift in <a href="https://github.com/forceCalendar/core/pull/195" className="link">core #195</a>.
-            The actual release passes 696 cross-host recurrence fixtures and all 26 integration files under UTC.
-            Older timezone-conversion failures remain: the full release-candidate suite passed 26/26 under UTC
+            The fresh UTC suite passes all 26 integration files, including 696 cross-host recurrence fixtures.
+            The 2 October full release-candidate checks remain relevant: the suite passed 26/26 under UTC
             and Melbourne, but 25/26 under Los Angeles and Kolkata. Published runtime code matches that candidate
-            apart from its version constant. This refresh does not claim complete timezone correctness.
+            apart from its version constant. The full cross-host suite was not rerun on 4 October; this refresh does not claim complete timezone correctness.
           </p>
         </Card>
         <Card tone="sunken" className="mt-6">
@@ -316,7 +326,7 @@ export default async function Home() {
           <StatTile value="0" label="Runtime deps · core" tone="ok" />
           <StatTile value="0" label="Runtime deps · interface" tone="ok" />
           <StatTile value="4 / 4" label="Registry attestations present" tone="ok" />
-          <StatTile value="0" label="Known advisories · 4 package locks" tone="ok" />
+          <StatTile value={`${LOCKS_WITH_FINDINGS} / 4`} label="Dev locks with findings" tone={LOCKS_WITH_FINDINGS ? "warn" : "ok"} />
         </StatRow>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -367,9 +377,9 @@ export default async function Home() {
               <p className="text-sm leading-relaxed text-muted">
                 Each pinned npm version exposes an attestation endpoint with a SLSA v1 provenance predicate.
                 Metadata presence is distinct from cryptographic verification. Fresh <Code>npm audit signatures</Code>
-                checks verified 83 signatures / 17 attestations for the core 2.5.7 development tree. The earlier
-                interface tree check with core 2.5.6 verified 503 signatures / 128 attestations. These counts describe those installed trees,
-                not four individual release attestations.
+                checks verified 83 signatures / 17 attestations for the core 2.5.7 development tree and 529 signatures /
+                56 attestations for the exactly pinned interface 1.9.1 compatibility fixture. These counts describe
+                installed dependency trees, not four individual release attestations.
               </p>
             </CardSection>
             <CardSection tone="sunken">
@@ -394,11 +404,13 @@ export default async function Home() {
               <span className="text-xs text-subtle">npm audit · {LAST_VERIFIED}</span>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              All four public package development lockfiles returned zero known advisories in this refresh.
-              A final clean consumer install of core 2.5.7, interface 1.9.0, React adapter 0.3.1 and Vue adapter 0.3.1
-              also returned zero known advisories with React 19.3.0 and Vue 3.5.43.
-              The interface suite was also rerun with core 2.5.7. This is a dated npm advisory result, not a live Dependabot alert count or a guarantee of security.
-              The website has its own Next.js dependency tree, assessed separately below.
+              The interface development lockfile has 29 npm affected-package entries, all tracing to one high-severity
+              <a href="https://github.com/advisories/GHSA-vfj7-8cjw-p6xm" className="link"> braces advisory</a> through Jest tooling.
+              This is one distinct advisory, not 29 separate vulnerabilities. Its production-only scan is clean.
+              Core and adapter development lockfile results are reported in their cards above. A clean consumer install
+              of core 2.5.7, interface 1.9.1 and both 0.3.1 adapters also returned zero known advisories.
+              Dependency scan results do not establish the absence of bugs in package code.
+              The website has its own dependency tree, assessed separately below.
             </p>
           </CardSection>
         </Card>
@@ -408,18 +420,19 @@ export default async function Home() {
         <SectionHeader eyebrow="Separate website check" title="This dashboard has dependencies too" />
         <Card>
           <p className="text-sm leading-relaxed text-muted">
-            The dashboard&apos;s original lockfile returned {evidence.auditWebsite.before.total} vulnerable dependencies:
-            {' '}{evidence.auditWebsite.before.critical} critical, {evidence.auditWebsite.before.high} high,
-            {' '}{evidence.auditWebsite.before.moderate} moderate and {evidence.auditWebsite.before.low} low.
-            This is separate from the zero-advisory library-package scans. Targeted compatible updates to Next.js,
-            PostCSS and affected transitive dependencies reduced the dashboard lockfile scan to
-            {' '}<strong className="font-medium text-fg">{evidence.auditWebsite.after.total} known advisories</strong>.
-            Advisory severity does not by itself establish exploitability in this application.
+            The {LAST_VERIFIED} scan reports <strong className="font-medium text-warn">{evidence.auditWebsite.audit.vulnerabilities.total} affected development/build dependencies</strong>,
+            all from one high-severity <a href="https://github.com/advisories/GHSA-vfj7-8cjw-p6xm" className="link">braces advisory</a>
+            through Tailwind 3 tooling. The production-only scan reports {evidence.auditWebsite.audit.productionOnly.total} affected dependencies.
+            These counts are affected-package entries, not distinct vulnerabilities, and do not establish exploitability in this application.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            The registry check found no patched braces release. npm suggests a Tailwind 4 major upgrade for most affected paths;
+            no major migration or dependency remediation was performed in this evidence refresh.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-subtle">
-            Next.js 16.3.8 · PostCSS 8.5.28 · {LAST_VERIFIED}. The downloadable evidence preserves both scan
-            summaries and the refreshed lockfile hash. These results describe this source revision;
-            they do not establish the version deployed by an independently operated mirror.
+            The <a href="/evidence/2026-10-02.json" className="link">2 October snapshot</a> preserves the earlier seven-to-zero
+            remediation. Advisory data changes over time: that historical zero is not the current result.
+            The current downloadable evidence includes lockfile hashes, the affected packages and audit scope.
           </p>
         </Card>
       </Section>

@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 1,
+  "verifiedDate": "2026-10-04",
+  "environment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "os": "Linux"
+  },
+  "scope": "Public package registry metadata, repository dependency audits and automated tests. Not an independent security audit.",
+  "packages": [
+    {
+      "pkg": "@forcecalendar/core",
+      "version": "2.5.7",
+      "repository": "https://github.com/forceCalendar/core",
+      "testedCommit": "5ab4dfe83000c81c885205858a427ba690e3e2f8",
+      "registryGitHead": "5ab4dfe83000c81c885205858a427ba690e3e2f8",
+      "runtimeDependencies": {},
+      "peerDependencies": {},
+      "integrity": "sha512-u8R8oIl0GfcFDN/v8EELA/lebMaqjv/pfbyEFweaBumN1DcaQzCC/2BpcXoUkHINzDILnNVSf/pITHZsdA4Png==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2fcore@2.5.7",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "26/26 integration test files and declaration checks passed under UTC, including 696 cross-host recurrence fixtures; all 22 published runtime JavaScript files match the tested release source",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "uniqueAdvisories": [],
+        "affectedPackages": [],
+        "lockfileSha256": "0c8224291b5567db294888cd4cfd7ec31333d02d819283b91074c0f0442d220d",
+        "verifiedDate": "2026-10-04"
+      },
+      "checks": {
+        "lintErrors": 0,
+        "lintWarnings": 4,
+        "format": "passed",
+        "verifiedRegistrySignatures": 83,
+        "verifiedAttestations": 17
+      },
+      "tarball": {
+        "sha256": "59f497897ff0293addaf5f56300a74ee40ea55ba266956efe706a8a8870ef85a",
+        "sourceJavaScriptFilesMatched": 22,
+        "sourceMismatches": [],
+        "runtimeFilesMatched": 22
+      },
+      "knownLimitations": {
+        "summary": "Legacy timezone-conversion integration failures remain for Los Angeles and Kolkata hosts. The recurrence DST fix is not a claim of complete timezone correctness.",
+        "source": "https://github.com/forceCalendar/core/pull/195",
+        "releaseCandidateFullSuite": {
+          "UTC": "26/26",
+          "Australia/Melbourne": "26/26",
+          "America/Los_Angeles": "25/26; legacy timezone conversion integration fails",
+          "Asia/Kolkata": "25/26; legacy timezone conversion integration fails"
+        },
+        "scope": "Historical cross-host full-suite results from the 2 October release candidate remain documented; not rerun as a full cross-host suite on 4 October. The complete UTC suite, including the 696-fixture recurrence matrix, was rerun on the unchanged published 2.5.7 release source."
+      }
+    },
+    {
+      "pkg": "@forcecalendar/interface",
+      "version": "1.9.1",
+      "repository": "https://github.com/forceCalendar/interface",
+      "testedCommit": "24dcd05eed7f52b3739d943aa523151674aa58a5",
+      "registryGitHead": "d2f5749d96740e99c970cb5d8a58abdb27542b01",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "@forcecalendar/core": ">=2.0.0"
+      },
+      "integrity": "sha512-WK032iXIWXhL57KfRR2cJPz80FdwgkrmSnxoFyWsGnj/IgFy5I1bIcUv+YGrrsd76I+OeiCWLAZWqOHmtpYCMw==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2finterface@1.9.1",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "298/298 tests in 20 suites and declaration checks passed with published core 2.5.7; all 17 published source JavaScript files match the tested release source",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "repository lockfile, including development dependencies",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 29,
+          "critical": 0,
+          "total": 29
+        },
+        "uniqueAdvisories": [
+          {
+            "name": "braces",
+            "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+            "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+            "severity": "high",
+            "range": "<=3.0.3"
+          }
+        ],
+        "affectedPackages": [
+          {
+            "name": "@jest/console",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/core",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/environment",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/environment-jsdom-abstract",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/expect",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/fake-timers",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/globals",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/reporters",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/test-result",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/test-sequencer",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "@jest/transform",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "babel-jest",
+            "severity": "high",
+            "isDirect": true,
+            "fixAvailable": true
+          },
+          {
+            "name": "braces",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "expect",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest",
+            "severity": "high",
+            "isDirect": true,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-circus",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-cli",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-config",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-environment-jsdom",
+            "severity": "high",
+            "isDirect": true,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-environment-node",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-haste-map",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-message-util",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-resolve",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-resolve-dependencies",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-runner",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-runtime",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-snapshot",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "jest-watcher",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          },
+          {
+            "name": "micromatch",
+            "severity": "high",
+            "isDirect": false,
+            "fixAvailable": true
+          }
+        ],
+        "lockfileSha256": "115b29b86fc752460d2b0b3d5eb47cc8fe4787b3ad4c07ce90242eb4841b306a",
+        "verifiedDate": "2026-10-04",
+        "productionOnly": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "note": "29 npm affected-package entries trace to one distinct braces advisory in development/test tooling. These are not 29 distinct vulnerabilities. npm reports compatible dependency-tree fixes; none were applied or validated in this evidence refresh."
+      },
+      "checks": {
+        "lintErrors": 0,
+        "lintWarnings": 12,
+        "lineCoveragePercent": 84.08,
+        "lineCoverageNote": "Fresh 4 October run with core 2.5.7 and interface 1.9.1 source.",
+        "format": "passed",
+        "build": "passed",
+        "signatureVerification": "passed for the exactly pinned compatibility fixture",
+        "publishedDistComparison": {
+          "force-calendar-interface.esm.js": {
+            "publishedBytes": 141462,
+            "builtBytes": 141462,
+            "match": true
+          },
+          "force-calendar-interface.umd.js": {
+            "publishedBytes": 124438,
+            "builtBytes": 124438,
+            "match": true
+          }
+        },
+        "testToolchain": {
+          "@forcecalendar/core": "2.5.7",
+          "jest": "30.2.0",
+          "jest-environment-jsdom": "30.2.0",
+          "typescript": "7.0.2",
+          "vite": "8.1.4",
+          "eslint": "8.57.1",
+          "prettier": "3.8.1"
+        },
+        "testSetup": "Fresh fixture from the release source; direct development dependencies exactly pinned to original lockfile versions except published core 2.5.7. Lockfile generation and npm ci used --ignore-scripts. Tests, build and quality commands were then run explicitly.",
+        "verifiedRegistrySignatures": 529,
+        "verifiedAttestations": 56,
+        "fixtureLockfileSha256": "1e47cc8c4a635321dc123007085282a6bac2599df7ae30db196f1c6d6a768436",
+        "installScriptsEnabled": false,
+        "compatibilityFixtureAudit": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 29,
+          "critical": 0,
+          "total": 29
+        },
+        "productionOnlyAudit": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "tarball": {
+        "sha256": "aca804209b39978e2da7969b5cacbed68e3fff313e0f0842546a6688b5ce9707",
+        "sourceJavaScriptFilesMatched": 17,
+        "sourceMismatches": []
+      }
+    },
+    {
+      "pkg": "@forcecalendar/react",
+      "version": "0.3.1",
+      "repository": "https://github.com/forceCalendar/react",
+      "testedCommit": "4f4741f3f1114a86ab56a6321ea9d0dc1a42c70d",
+      "registryGitHead": "4f4741f3f1114a86ab56a6321ea9d0dc1a42c70d",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "react": ">=18",
+        "@forcecalendar/core": ">=2.0.0 <3",
+        "@forcecalendar/interface": ">=1.6.0 <2"
+      },
+      "integrity": "sha512-CcOR3Ei5j3vJpVLVS/ZlbMjO8CJAcbYBssBN8VkpCJ92GW0w+Odu/vgiDjt4Zc8c5vpAtfF6M7teg1DaiaqGQw==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2freact@0.3.1",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "37/37 published-tarball runtime tests with React 19.3.0 and 37/37 with React 18.3.1, both against actual core 2.5.7 and interface 1.9.1; Bundler and NodeNext declarations passed; no rebuild",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "original repository lockfile including development dependencies; metadata queried without npm ci",
+        "lockfileSha256": "23c9116f043bfe917a42d4db7f9298f65e768ca7202cfa0c35d699454eeef087",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 1,
+          "dev": 47,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 47
+        },
+        "uniqueAdvisories": [],
+        "affectedPackages": []
+      },
+      "checks": {},
+      "shasum": "e7aa2eaecea26cf3e0441c2e56f91322b9f2fad8",
+      "tarballUrl": "https://registry.npmjs.org/@forcecalendar/react/-/react-0.3.1.tgz",
+      "tarballSha256": "23d6ed714bc1bcde2e4f7416d5ed470b181d4823c33d78bb2973a27292b66131",
+      "integrityVerified": true,
+      "attestationNote": "Registry-reported metadata; provenance signatures not reverified in this task."
+    },
+    {
+      "pkg": "@forcecalendar/vue",
+      "version": "0.3.1",
+      "repository": "https://github.com/forceCalendar/vue",
+      "testedCommit": "90cb6a8542398d1d904ce720987ab86e89559523",
+      "registryGitHead": "90cb6a8542398d1d904ce720987ab86e89559523",
+      "runtimeDependencies": {},
+      "peerDependencies": {
+        "vue": ">=3.3",
+        "@forcecalendar/core": ">=2.0.0 <3",
+        "@forcecalendar/interface": ">=1.6.0 <2"
+      },
+      "integrity": "sha512-qdKB36VlDXaeszrrnuK47YmI0Aj+xKe/sjgBgQmKCZV1Gz9JKIbLiiehTWntAXlFvqySNACWLlHr/lwxwxktxQ==",
+      "attestation": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@forcecalendar%2fvue@0.3.1",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "tests": "33/33 published-tarball runtime tests with Vue 3.5.43 against actual core 2.5.7 and interface 1.9.1; Bundler and NodeNext declarations passed; no rebuild",
+      "audit": {
+        "command": "npm audit --json",
+        "scope": "original repository lockfile including development dependencies; metadata queried without npm ci",
+        "lockfileSha256": "f567724ee083c82cb30818b74e752539b387129aef4f78fd985fe74df8d87344",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 1,
+          "dev": 64,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 64
+        },
+        "uniqueAdvisories": [],
+        "affectedPackages": []
+      },
+      "checks": {},
+      "shasum": "cdee0401496da78684b9aaacd9c98051c27ed358",
+      "tarballUrl": "https://registry.npmjs.org/@forcecalendar/vue/-/vue-0.3.1.tgz",
+      "tarballSha256": "ab18bce66b2d6a55e2220091dfad75a566fd0f251b82ede62aac532ad2c9d4c3",
+      "integrityVerified": true,
+      "attestationNote": "Registry-reported metadata; provenance signatures not reverified in this task."
+    }
+  ],
+  "limitations": [
+    "Zero known dependency advisories is not proof that application code is vulnerability-free.",
+    "Peer dependencies belong to the consuming application and must be assessed there.",
+    "No fresh independent penetration test, Snyk scan, Dependabot alert API query or Salesforce browser/CSP validation was performed in this refresh.",
+    "The issue tracker lists public labelled issues only; closed-as-not-planned is not counted as a fix.",
+    "Core 2.5.7 and Interface 1.9.1 source tests are backed by byte-for-byte comparison of their 22 runtime / 17 source JavaScript files in actual npm tarballs. Both rebuilt interface distribution bundles are byte-identical to the published bundles with the recorded pinned toolchain. Published adapter checks also exercise actual registry peers separately.",
+    "Core 2.5.7 fixes recurrence DST drift, but historical full-suite failures under Los Angeles/Kolkata remain documented from the 2 October release candidate. The unchanged release passes the fresh UTC suite and 696-fixture recurrence matrix. No fresh full cross-host run or blanket timezone-correctness claim is made.",
+    "jsdom integration and SSR tests are not real-browser, Salesforce, CSP or independent penetration tests.",
+    "Direct interface root import needs a DOM; bare-Node direct import raises HTMLElement is not defined. Adapters remain SSR-safe in the existing tests through lazy client import. Do not describe all package-root imports as bare-Node/SSR-safe.",
+    "Core and interface packages do not export a package.json subpath. Version checks for them read the installed manifest; package.json subpath checks apply only to React/Vue adapters.",
+    "Original repository audits concern their original lockfiles (core 2.5.5/interface 1.8.0 peers); separate fresh compatibility fixture audits include exact current core 2.5.7/interface 1.9.1."
+  ],
+  "consumerCheck": {
+    "packages": {
+      "@forcecalendar/core": "2.5.7",
+      "@forcecalendar/interface": "1.9.1",
+      "@forcecalendar/react": "0.3.1",
+      "@forcecalendar/vue": "0.3.1",
+      "react": "19.3.0",
+      "vue": "3.5.43"
+    },
+    "result": "All six package-root ESM imports passed under jsdom; adapter package.json exports/version assertions passed. Bare-Node core and adapter imports passed.",
+    "audit": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 29,
+        "dev": 0,
+        "optional": 0,
+        "peer": 0,
+        "peerOptional": 0,
+        "total": 28
+      }
+    },
+    "lockfileSha256": "0bc18804fa225dc36d18f0dad9749335a984761274b13a31f0180de5e375ca16",
+    "scope": "Fresh production-only consumer installed from integrity-verified registry tarballs. jsdom smoke harness was loaded from the separate React fixture, not added to this consumer dependency tree. All 104 installed forceCalendar package files match the downloaded tarballs."
+  },
+  "auditWebsite": {
+    "repository": "https://github.com/forceCalendar/audit",
+    "baseCommit": "05c6a253abdb755c61801daaa0dfd724be20e8e7",
+    "lockfileSha256": "1977883a89e40cf2c2f10595b54bb7103ed238d89b54e814164c99311305994a",
+    "scope": "Audit website dependency tree, separate from library packages",
+    "historicalRemediation": {
+      "verifiedDate": "2026-10-02",
+      "before": {
+        "info": 0,
+        "low": 1,
+        "moderate": 1,
+        "high": 4,
+        "critical": 1,
+        "total": 7
+      },
+      "after": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "description": "Next 16.2.10 to 16.3.8; PostCSS minimum 8.5.28 plus compatible updates for vulnerable browserslist, nanoid, postcss-selector-parser, baseline-browser-mapping and sharp dependencies. No major framework migration."
+    },
+    "audit": {
+      "command": "npm audit --json",
+      "scope": "repository lockfile, including development dependencies",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 5,
+        "critical": 0,
+        "total": 5
+      },
+      "uniqueAdvisories": [
+        {
+          "name": "braces",
+          "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+          "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+          "severity": "high",
+          "range": "<=3.0.3"
+        }
+      ],
+      "affectedPackages": [
+        {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "name": "chokidar",
+          "severity": "high",
+          "isDirect": false,
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "fixAvailable": true
+        },
+        {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "name": "tailwindcss",
+          "severity": "high",
+          "isDirect": true,
+          "fixAvailable": {
+            "name": "tailwindcss",
+            "version": "4.3.3",
+            "isSemVerMajor": true
+          }
+        }
+      ],
+      "productionOnly": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "note": "Five npm affected-package entries trace to the same single braces advisory in Tailwind 3 development/build tooling. npm suggests Tailwind 4 for most affected paths; a major migration was not attempted. No patched braces release was available in the registry check."
+    }
+  },
+  "verifiedAt": "2026-10-04T03:16:00Z",
+  "previousSnapshot": "/evidence/2026-10-02.json",
+  "adapterChecks": [
+    {
+      "fixture": "react19",
+      "frameworkVersion": "19.3.0",
+      "runtimeTests": {
+        "passed": 37,
+        "failed": 0,
+        "skipped": 0
+      },
+      "declarations": {
+        "Bundler": "passed",
+        "NodeNext": "passed",
+        "skipLibCheck": false
+      },
+      "noRebuild": true,
+      "adapterDistFilesByteIdentical": 4,
+      "dependencies": {
+        "node_modules/@forcecalendar/core": "2.5.7",
+        "node_modules/@forcecalendar/interface": "1.9.1",
+        "node_modules/@types/react": "19.2.17",
+        "node_modules/react": "19.3.0",
+        "node_modules/react-dom": "19.3.0"
+      },
+      "audit": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 8,
+          "dev": 40,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 47
+        }
+      },
+      "lockfileSha256": "69b0afaec9b5caa2a8478f698da3f765c09ea60b9a5e3c97ab50fd60a4bccaff"
+    },
+    {
+      "fixture": "react18",
+      "frameworkVersion": "18.3.1",
+      "runtimeTests": {
+        "passed": 37,
+        "failed": 0,
+        "skipped": 0
+      },
+      "declarations": {
+        "Bundler": "passed",
+        "NodeNext": "passed",
+        "skipLibCheck": false
+      },
+      "noRebuild": true,
+      "adapterDistFilesByteIdentical": 4,
+      "dependencies": {
+        "node_modules/@forcecalendar/core": "2.5.7",
+        "node_modules/@forcecalendar/interface": "1.9.1",
+        "node_modules/@types/react": "18.3.27",
+        "node_modules/react": "18.3.1",
+        "node_modules/react-dom": "18.3.1"
+      },
+      "audit": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 11,
+          "dev": 40,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 50
+        }
+      },
+      "lockfileSha256": "c0288a200a3d452afbf88896078b3ae8f87cf541ca7afb2ab908ae58409b05e3"
+    },
+    {
+      "fixture": "vue3",
+      "frameworkVersion": "3.5.43",
+      "runtimeTests": {
+        "passed": 33,
+        "failed": 0,
+        "skipped": 0
+      },
+      "declarations": {
+        "Bundler": "passed",
+        "NodeNext": "passed",
+        "skipLibCheck": false
+      },
+      "noRebuild": true,
+      "adapterDistFilesByteIdentical": 4,
+      "dependencies": {
+        "node_modules/@forcecalendar/core": "2.5.7",
+        "node_modules/@forcecalendar/interface": "1.9.1",
+        "node_modules/@vue/server-renderer": "3.5.43",
+        "node_modules/vue": "3.5.43"
+      },
+      "audit": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 38,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 64
+        }
+      },
+      "lockfileSha256": "5d6f8c41d21472294cf56031b14a5d8ea05a2ef0abdf3fb9c1aca84bc10356af"
+    }
+  ],
+  "adapterEnvironment": {
+    "node": "v24.19.0",
+    "npm": "11.9.0",
+    "os": "Linux 6.18.44 x86_64",
+    "TZ": "UTC",
+    "typescript": "5.9.3",
+    "jsdom": "29.1.1"
+  }
+}
