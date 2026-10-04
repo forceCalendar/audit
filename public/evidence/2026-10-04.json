@@ -298,30 +298,49 @@
         "lineCoverageNote": "Fresh 4 October run with core 2.5.7 and interface 1.9.1 source.",
         "format": "passed",
         "build": "passed",
-        "buildWarning": "Vite warns that __dirname will need migration before a future native config-loader default.",
-        "signatureVerification": "Not reverified in this snapshot; earlier counts remain in the 2 October archive.",
+        "signatureVerification": "passed for the exactly pinned compatibility fixture",
         "publishedDistComparison": {
           "force-calendar-interface.esm.js": {
             "publishedBytes": 141462,
-            "builtBytes": 141430,
-            "match": false
+            "builtBytes": 141462,
+            "match": true
           },
           "force-calendar-interface.umd.js": {
             "publishedBytes": 124438,
-            "builtBytes": 124404,
-            "match": false
+            "builtBytes": 124438,
+            "match": true
           }
         },
         "testToolchain": {
           "@forcecalendar/core": "2.5.7",
-          "jest": "30.5.2",
-          "jest-environment-jsdom": "30.5.2",
+          "jest": "30.2.0",
+          "jest-environment-jsdom": "30.2.0",
           "typescript": "7.0.2",
-          "vite": "8.3.2",
+          "vite": "8.1.4",
           "eslint": "8.57.1",
-          "prettier": "3.9.9"
+          "prettier": "3.8.1"
         },
-        "testSetup": "npm ci, then npm install --no-save --package-lock=false @forcecalendar/core@2.5.7. The compatibility overlay changes the installed fixture while preserving the repository lockfile used for the advisory scan."
+        "testSetup": "Fresh fixture from the release source; direct development dependencies exactly pinned to original lockfile versions except published core 2.5.7. Lockfile generation and npm ci used --ignore-scripts. Tests, build and quality commands were then run explicitly.",
+        "verifiedRegistrySignatures": 529,
+        "verifiedAttestations": 56,
+        "fixtureLockfileSha256": "1e47cc8c4a635321dc123007085282a6bac2599df7ae30db196f1c6d6a768436",
+        "installScriptsEnabled": false,
+        "compatibilityFixtureAudit": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 29,
+          "critical": 0,
+          "total": 29
+        },
+        "productionOnlyAudit": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
       },
       "tarball": {
         "sha256": "aca804209b39978e2da7969b5cacbed68e3fff313e0f0842546a6688b5ce9707",
@@ -435,7 +454,7 @@
     "Peer dependencies belong to the consuming application and must be assessed there.",
     "No fresh independent penetration test, Snyk scan, Dependabot alert API query or Salesforce browser/CSP validation was performed in this refresh.",
     "The issue tracker lists public labelled issues only; closed-as-not-planned is not counted as a fix.",
-    "Core 2.5.7 and Interface 1.9.1 source tests are backed by byte-for-byte comparison of their 22 runtime / 17 source JavaScript files in actual npm tarballs. Rebuilt interface distribution files differ from the published bundles, so source equivalence is not a claim of byte-identical builds. Published adapter checks exercise actual registry peers separately.",
+    "Core 2.5.7 and Interface 1.9.1 source tests are backed by byte-for-byte comparison of their 22 runtime / 17 source JavaScript files in actual npm tarballs. Both rebuilt interface distribution bundles are byte-identical to the published bundles with the recorded pinned toolchain. Published adapter checks also exercise actual registry peers separately.",
     "Core 2.5.7 fixes recurrence DST drift, but historical full-suite failures under Los Angeles/Kolkata remain documented from the 2 October release candidate. The unchanged release passes the fresh UTC suite and 696-fixture recurrence matrix. No fresh full cross-host run or blanket timezone-correctness claim is made.",
     "jsdom integration and SSR tests are not real-browser, Salesforce, CSP or independent penetration tests.",
     "Direct interface root import needs a DOM; bare-Node direct import raises HTMLElement is not defined. Adapters remain SSR-safe in the existing tests through lazy client import. Do not describe all package-root imports as bare-Node/SSR-safe.",
@@ -577,7 +596,7 @@
       "note": "Five npm affected-package entries trace to the same single braces advisory in Tailwind 3 development/build tooling. npm suggests Tailwind 4 for most affected paths; a major migration was not attempted. No patched braces release was available in the registry check."
     }
   },
-  "verifiedAt": "2026-10-04T02:20:00Z",
+  "verifiedAt": "2026-10-04T03:16:00Z",
   "previousSnapshot": "/evidence/2026-10-02.json",
   "adapterChecks": [
     {

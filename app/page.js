@@ -377,9 +377,9 @@ export default async function Home() {
               <p className="text-sm leading-relaxed text-muted">
                 Each pinned npm version exposes an attestation endpoint with a SLSA v1 provenance predicate.
                 Metadata presence is distinct from cryptographic verification. Fresh <Code>npm audit signatures</Code>
-                checks verified 83 signatures / 17 attestations for the core 2.5.7 development tree. Fresh interface-tree
-                signature verification is incomplete; the 2 October archive retains the earlier check. These counts
-                describe installed dependency trees, not four individual release attestations.
+                checks verified 83 signatures / 17 attestations for the core 2.5.7 development tree and 529 signatures /
+                56 attestations for the exactly pinned interface 1.9.1 compatibility fixture. These counts describe
+                installed dependency trees, not four individual release attestations.
               </p>
             </CardSection>
             <CardSection tone="sunken">

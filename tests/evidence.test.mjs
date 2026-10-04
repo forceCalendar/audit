@@ -50,3 +50,14 @@ test('the previous snapshot remains a separately dated historical record', () =>
   assert.equal(archived.packages[1].audit.vulnerabilities.total, 0);
   assert.equal(evidence.previousSnapshot, '/evidence/2026-10-02.json');
 });
+
+test('interface final verification uses pinned dependencies and matches published bundles', () => {
+  const checks = evidence.packages[1].checks;
+  assert.equal(checks.installScriptsEnabled, false);
+  assert.equal(checks.testToolchain['@forcecalendar/core'], '2.5.7');
+  assert.equal(checks.testToolchain.jest, '30.2.0');
+  assert.equal(checks.verifiedRegistrySignatures, 529);
+  assert.equal(checks.verifiedAttestations, 56);
+  assert.ok(Object.values(checks.publishedDistComparison).every((result) => result.match));
+  assert.match(checks.fixtureLockfileSha256, /^[a-f0-9]{64}$/);
+});
